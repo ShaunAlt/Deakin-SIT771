@@ -11,6 +11,21 @@
 #   source ./setup.sh
 # - You will now be able to access any of the constants and functions
 #   implemented in this script.
+#
+# Required File Structure:
+# - This setup script works based on the assumption that the following
+#   filestructure is being implemented:
+#   SCRIPT_DIR/
+#   | - setup.sh
+#   | - Project_1_HelloWorld/
+#   |   | - Program.cs
+#   |   | - ...
+#   | - Project_2_WorkingWithObjects/
+#   |   | - Program.cs
+#   |   | - ...
+#   | ...
+#   Please note: for this, SCRIPT_DIR can be anywhere and named anything, it
+#   just refers to the parent folder containing everything else.
 # =============================================================================
 
 # =============================================================================
