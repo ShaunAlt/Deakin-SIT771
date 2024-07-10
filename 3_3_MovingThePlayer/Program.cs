@@ -7,7 +7,7 @@ namespace _3_3_MovingThePlayer
     {
         public static void Main()
         {
-            Window w = new Window("The Player Class", 500, 400);
+            Window w = new Window("Moving the Player", 500, 400);
             Player p = new Player(w);
 
             // Speed Boost has been added
