@@ -26,6 +26,10 @@ SCRIPT_DIR=$(dirname "$( realpath "$0" )") # directory containing this script
 # - `1` : ERROR - Parameters were invalid.
 # - `2` : ERROR - Directory already existed.
 # - `3` : ERROR - Failed to create project.
+#
+# How to Use:
+# - Type the following line into terminal after sourcing this setup file.
+#   create_project <PROJECT_NAME>
 # =============================================================================
 create_project() {
     echo "| Creating a New Project"
