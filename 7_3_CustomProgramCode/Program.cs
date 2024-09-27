@@ -255,6 +255,14 @@ namespace _7_3_CustomProgramCode
             }
         }
 
+        public List<Sprite> GetNPCS()
+        {
+            List<Sprite> sprites = new List<Sprite>();
+            foreach (Platform p in platforms) { sprites.Add(p); }
+            sprites.Add(goal);
+            return sprites;
+        }
+
         public static int PlayLevel(LevelNumber levelnum, Window w)
         {
             // play a particular level and return the score the player got
@@ -291,8 +299,7 @@ namespace _7_3_CustomProgramCode
                 vel.X = vel.X + acc_x;
                 // friction
                 vel.X = vel.X * 0.95;
-                foreach (Platform p in l.platforms) { p.Update(vel.X, 0); }
-                l.goal.Update(vel.X, 0);
+                foreach (Sprite s in l.GetNPCS()) { s.Update(vel.X, 0); }
                 bool reverseX = false;
                 foreach (Platform p in l.platforms) {
                     if (l.player.CheckCollision(p)) {
@@ -301,10 +308,7 @@ namespace _7_3_CustomProgramCode
                     }
                 }
                 if (reverseX) {
-                    foreach (Platform p in l.platforms) {
-                        p.Update(vel.X, 0, true);
-                    }
-                    l.goal.Update(vel.X, 0, true);
+                    foreach (Sprite s in l.GetNPCS()) { s.Update(vel.X, 0, true); }
                     vel.X = 0;
                 }
 
@@ -322,8 +326,7 @@ namespace _7_3_CustomProgramCode
                 // vel.Y = Math.Min(10, Math.Max(-10, vel.Y + acc_y));
                 vel.Y = (vel.Y + acc_y) * 0.99;
                 // update positions
-                foreach (Platform p in l.platforms) { p.Update(0, vel.Y); }
-                l.goal.Update(0, vel.Y);
+                foreach (Sprite s in l.GetNPCS()) { s.Update(0, vel.Y); }
                 // check collisions and teleport if required
                 bool reverseY = false;
                 foreach (Platform p in l.platforms) {
@@ -333,17 +336,13 @@ namespace _7_3_CustomProgramCode
                     }
                 }
                 if (reverseY) {
-                    foreach (Platform p in l.platforms) {
-                        p.Update(0, vel.Y, true);
-                    }
-                    l.goal.Update(0, vel.Y, true);
+                    foreach (Sprite s in l.GetNPCS()) { s.Update(0, vel.Y, true); }
                     vel.Y = 0;
                 }
 
                 // draw sprites
                 l.player.Draw();
-                foreach (Platform p in l.platforms) { p.Draw(); }
-                l.goal.Draw();
+                foreach (Sprite s in l.GetNPCS()) { s.Draw(); }
 
                 // if reached target - return score
                 if (l.player.CheckCollision(l.goal)) { return score; }
