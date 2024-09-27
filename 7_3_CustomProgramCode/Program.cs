@@ -161,6 +161,7 @@ namespace _7_3_CustomProgramCode
     {
         public List<Platform> platforms;
         public Player player;
+        public Goal goal;
 
         public Level(LevelNumber lvl, Window w)
         {
@@ -171,8 +172,9 @@ namespace _7_3_CustomProgramCode
                 case LevelNumber.L0:
                     platforms = new List<Platform>(){
                         new Platform(600, 500, PlatformType.Large, w),
-                        new Platform(500, 400, PlatformType.Large, w)
+                        new Platform(500, 400, PlatformType.Large90, w)
                     };
+                    goal = new Goal(700, 400, w);
                     break;
                 case LevelNumber.L1:
                     platforms = new List<Platform>(){
@@ -242,14 +244,15 @@ namespace _7_3_CustomProgramCode
                 double acc_x = 0;
                 if (SplashKit.KeyDown(SplashKitSDK.KeyCode.RightKey)) {
                     // right
-                    acc_x += 0.05;
+                    acc_x -= 0.25;
                 }
                 if (SplashKit.KeyDown(SplashKitSDK.KeyCode.LeftKey)) {
                     // right
-                    acc_x -= 0.05;
+                    acc_x += 0.25;
                 }
                 vel.X = Math.Min(3, Math.Max(-3, vel.X + acc_x));
                 foreach (Platform p in l.platforms) { p.Update(vel.X, 0); }
+                l.goal.Update(vel.X, 0);
                 bool reverseX = false;
                 foreach (Platform p in l.platforms) {
                     if (l.player.CheckCollision(p)) {
@@ -261,6 +264,7 @@ namespace _7_3_CustomProgramCode
                     foreach (Platform p in l.platforms) {
                         p.Update(vel.X, 0, true);
                     }
+                    l.goal.Update(vel.X, 0, true);
                     vel.X = 0;
                 }
 
@@ -269,15 +273,16 @@ namespace _7_3_CustomProgramCode
                 if (SplashKit.KeyDown(SplashKitSDK.KeyCode.UpKey)) {
                     // jump
                     if (vel.Y == 0) {
-                        acc_y = 3;
+                        acc_y = 10;
                     }
                 }
                 // gravity
-                acc_y -= 0.05;
+                acc_y -= 0.25;
                 // update velocity from acceleration
                 vel.Y = Math.Min(10, Math.Max(-10, vel.Y + acc_y));
                 // update positions
                 foreach (Platform p in l.platforms) { p.Update(0, vel.Y); }
+                l.goal.Update(0, vel.Y);
                 // check collisions and teleport if required
                 bool reverseY = false;
                 foreach (Platform p in l.platforms) {
@@ -290,13 +295,19 @@ namespace _7_3_CustomProgramCode
                     foreach (Platform p in l.platforms) {
                         p.Update(0, vel.Y, true);
                     }
+                    l.goal.Update(0, vel.Y, true);
                     vel.Y = 0;
                 }
 
                 // draw sprites
                 l.player.Draw();
                 foreach (Platform p in l.platforms) { p.Draw(); }
+                l.goal.Draw();
 
+                // if reached target - return score
+                if (l.player.CheckCollision(l.goal)) { return score; }
+
+                score--; // decrease score based on time
                 w.Refresh(60);
             }
 
@@ -359,9 +370,13 @@ namespace _7_3_CustomProgramCode
     }
     public enum PlatformType {
         Tiny,
+        Tiny90,
         Small,
+        Small90,
         Medium,
-        Large
+        Medium90,
+        Large,
+        Large90
     }
 
     public class Platform : Sprite
@@ -379,12 +394,20 @@ namespace _7_3_CustomProgramCode
             {
                 case PlatformType.Tiny:
                     return "Resources/images/Platform - Tiny.png";
+                case PlatformType.Tiny90:
+                    return "Resources/images/Platform - Tiny 90.png";
                 case PlatformType.Small:
                     return "Resources/images/Platform - Sml.png";
+                case PlatformType.Small90:
+                    return "Resources/images/Platform - Sml 90.png";
                 case PlatformType.Medium:
                     return "Resources/images/Platform - Med.png";
+                case PlatformType.Medium90:
+                    return "Resources/images/Platform - Med 90.png";
                 case PlatformType.Large:
                     return "Resources/images/Platform - Lrg.png";
+                case PlatformType.Large90:
+                    return "Resources/images/Platform - Lrg 90.png";
                 default:
                     throw new ArgumentException("Invalid platform type");
             }
@@ -399,6 +422,18 @@ namespace _7_3_CustomProgramCode
             Window window
         ) : base(x, y, "Resources/images/Player.png", window)
         {
+        }
+    }
+
+    public class Goal : Sprite
+    {
+        public Goal(
+            float x,
+            float y,
+            Window window
+        ) : base(x, y, "Resources/images/Target.png", window)
+        {
+
         }
     }
 
@@ -445,10 +480,12 @@ namespace _7_3_CustomProgramCode
             Window w = new Window("Game Window", 1200, 800);
 
             // initialize screen
-            Screen s = Screen.Login;
+            // Screen s = Screen.Login;
+            Screen s = Screen.Lvl0; // testing
 
             // initialize account logged in
-            Account? a = null;
+            // Account? a = null;
+            Account? a = Account.GetAccount("test"); // testing
 
             // Main loop to update the windows
             while ((!w.CloseRequested) && (s != Screen.Quit))
