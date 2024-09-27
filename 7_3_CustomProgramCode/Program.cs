@@ -88,7 +88,7 @@ namespace _7_3_CustomProgramCode
 
         public void AddScore(LevelNumber lvl, int score)
         {
-            _scores.Add(new Score(score, lvl));
+            if (score > 0) { _scores.Add(new Score(score, lvl)); }
         }
 
         public static Account GetAccount(string name)
@@ -171,10 +171,41 @@ namespace _7_3_CustomProgramCode
             {
                 case LevelNumber.L0:
                     platforms = new List<Platform>(){
+                        new Platform(0, 100, PlatformType.Large90, w),
+                        new Platform(0, 300, PlatformType.Large90, w),
+                        new Platform(0, 500, PlatformType.Large90, w),
+                        new Platform(0, 700, PlatformType.Large, w),
+                        new Platform(200, 700, PlatformType.Large, w),
+                        new Platform(400, 700, PlatformType.Large, w),
+                        new Platform(600, 700, PlatformType.Large, w),
+                        new Platform(800, 700, PlatformType.Large, w),
+                        new Platform(1000, 700, PlatformType.Large, w),
+                        new Platform(1200, 700, PlatformType.Large, w),
+                        new Platform(1400, 700, PlatformType.Large, w),
+                        new Platform(1600, 700, PlatformType.Large, w),
+                        new Platform(1800, 700, PlatformType.Large, w),
+                        new Platform(2000, 700, PlatformType.Large, w),
+                        new Platform(2200, 700, PlatformType.Large, w),
+                        new Platform(2400, 700, PlatformType.Large, w),
+                        new Platform(2600, 700, PlatformType.Large, w),
+                        new Platform(2800, 700, PlatformType.Large, w),
+                        new Platform(3000, 700, PlatformType.Large, w),
+                        new Platform(3195, 500, PlatformType.Large90, w),
+                        new Platform(3195, 300, PlatformType.Large90, w),
+                        new Platform(3195, 100, PlatformType.Large90, w),
+                        new Platform(3195, -100, PlatformType.Large90, w),
+                        new Platform(3195, -300, PlatformType.Large90, w),
+                        new Platform(3195, -500, PlatformType.Large90, w),
                         new Platform(600, 500, PlatformType.Large, w),
-                        new Platform(500, 400, PlatformType.Large90, w)
+                        new Platform(800, 500, PlatformType.Large, w),
+                        new Platform(1200, 300, PlatformType.Large, w),
+                        new Platform(1400, 300, PlatformType.Large, w),
+                        new Platform(1800, 100, PlatformType.Large, w),
+                        new Platform(2000, 100, PlatformType.Large, w),
+                        new Platform(2400, -100, PlatformType.Large, w),
+                        new Platform(2600, -100, PlatformType.Large, w),
                     };
-                    goal = new Goal(700, 400, w);
+                    goal = new Goal(2600, -200, w);
                     break;
                 case LevelNumber.L1:
                     platforms = new List<Platform>(){
@@ -240,17 +271,26 @@ namespace _7_3_CustomProgramCode
                 SplashKit.ProcessEvents();
                 w.Clear(Color.White);
 
+                // escape key
+                if (SplashKit.KeyDown(SplashKitSDK.KeyCode.EscapeKey))
+                {
+                    return -2;
+                }
+
                 // update left / right
                 double acc_x = 0;
                 if (SplashKit.KeyDown(SplashKitSDK.KeyCode.RightKey)) {
                     // right
-                    acc_x -= 0.25;
+                    acc_x -= 0.35;
                 }
                 if (SplashKit.KeyDown(SplashKitSDK.KeyCode.LeftKey)) {
                     // right
-                    acc_x += 0.25;
+                    acc_x += 0.35;
                 }
-                vel.X = Math.Min(3, Math.Max(-3, vel.X + acc_x));
+                // vel.X = Math.Min(3, Math.Max(-3, vel.X + acc_x));
+                vel.X = vel.X + acc_x;
+                // friction
+                vel.X = vel.X * 0.95;
                 foreach (Platform p in l.platforms) { p.Update(vel.X, 0); }
                 l.goal.Update(vel.X, 0);
                 bool reverseX = false;
@@ -273,13 +313,14 @@ namespace _7_3_CustomProgramCode
                 if (SplashKit.KeyDown(SplashKitSDK.KeyCode.UpKey)) {
                     // jump
                     if (vel.Y == 0) {
-                        acc_y = 10;
+                        acc_y = 15;
                     }
                 }
                 // gravity
-                acc_y -= 0.25;
+                acc_y -= 0.251;
                 // update velocity from acceleration
-                vel.Y = Math.Min(10, Math.Max(-10, vel.Y + acc_y));
+                // vel.Y = Math.Min(10, Math.Max(-10, vel.Y + acc_y));
+                vel.Y = (vel.Y + acc_y) * 0.99;
                 // update positions
                 foreach (Platform p in l.platforms) { p.Update(0, vel.Y); }
                 l.goal.Update(0, vel.Y);
@@ -393,21 +434,21 @@ namespace _7_3_CustomProgramCode
             switch (type_)
             {
                 case PlatformType.Tiny:
-                    return "Resources/images/Platform - Tiny.png";
+                    return "Resources/images/Platform v2/Platform - Tiny v2.png";
                 case PlatformType.Tiny90:
-                    return "Resources/images/Platform - Tiny 90.png";
+                    return "Resources/images/Platform v2/Platform - Tiny v2 90.png";
                 case PlatformType.Small:
-                    return "Resources/images/Platform - Sml.png";
+                    return "Resources/images/Platform v2/Platform - Sml v2.png";
                 case PlatformType.Small90:
-                    return "Resources/images/Platform - Sml 90.png";
+                    return "Resources/images/Platform v2/Platform - Sml v2 90.png";
                 case PlatformType.Medium:
-                    return "Resources/images/Platform - Med.png";
+                    return "Resources/images/Platform v2/Platform - Med v2.png";
                 case PlatformType.Medium90:
-                    return "Resources/images/Platform - Med 90.png";
+                    return "Resources/images/Platform v2/Platform - Med v2 90.png";
                 case PlatformType.Large:
-                    return "Resources/images/Platform - Lrg.png";
+                    return "Resources/images/Platform v2/Platform - Lrg v2.png";
                 case PlatformType.Large90:
-                    return "Resources/images/Platform - Lrg 90.png";
+                    return "Resources/images/Platform v2/Platform - Lrg v2 90.png";
                 default:
                     throw new ArgumentException("Invalid platform type");
             }
@@ -431,7 +472,7 @@ namespace _7_3_CustomProgramCode
             float x,
             float y,
             Window window
-        ) : base(x, y, "Resources/images/Target.png", window)
+        ) : base(x, y, "Resources/images/Target2.png", window)
         {
 
         }
@@ -487,6 +528,8 @@ namespace _7_3_CustomProgramCode
             // Account? a = null;
             Account? a = Account.GetAccount("test"); // testing
 
+            int lvl_score;
+
             // Main loop to update the windows
             while ((!w.CloseRequested) && (s != Screen.Quit))
             {
@@ -520,10 +563,21 @@ namespace _7_3_CustomProgramCode
                     case Screen.Lvl0:
                         // play level 0
                         if (a == null) { s = Screen.Login; break; }
-                        a.AddScore(
-                            LevelNumber.L0,
-                            Level.PlayLevel(LevelNumber.L0, w)
-                        );
+                        lvl_score = Level.PlayLevel(LevelNumber.L0, w);
+                        if (lvl_score == -1) { s = Screen.Quit; }
+                        else if (lvl_score == -2) {
+                            // escaped
+                            s = Screen.PlayMenu;
+                        }
+                        else {
+                            a.AddScore(LevelNumber.L0, lvl_score);
+                            s = Screen.PlayMenu;
+                        }
+
+                        // a.AddScore(
+                        //     LevelNumber.L0,
+                        //     Level.PlayLevel(LevelNumber.L0, w)
+                        // );
                         s = Screen.PlayMenu;
                         break;
                     case Screen.Lvl1:
