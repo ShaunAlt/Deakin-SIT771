@@ -616,8 +616,80 @@ namespace _7_3_CustomProgramCode
                     };
                     break;
                 case LevelNumber.L7:
+                    // staircase
                     platforms = new List<Platform>(){
-
+                        // floor
+                        new Platform(400, 500, PlatformType.Large, w),
+                        new Platform(600, 500, PlatformType.Large, w),
+                        new Platform(800, 500, PlatformType.Large, w),
+                        new Platform(1000, 500, PlatformType.Large, w),
+                        new Platform(1200, 500, PlatformType.Large, w),
+                        new Platform(1400, 500, PlatformType.Large, w),
+                        new Platform(1600, 500, PlatformType.Large, w),
+                        new Platform(1800, 500, PlatformType.Large, w),
+                        new Platform(2000, 500, PlatformType.Large, w),
+                        new Platform(2200, 500, PlatformType.Large, w),
+                        // left wall
+                        new Platform(400, 300, PlatformType.Large90, w),
+                        new Platform(400, 100, PlatformType.Large90, w),
+                        new Platform(400, -100, PlatformType.Large90, w),
+                        new Platform(400, -300, PlatformType.Large90, w),
+                        new Platform(400, -500, PlatformType.Large90, w),
+                        new Platform(400, -700, PlatformType.Large90, w),
+                        new Platform(400, -900, PlatformType.Large90, w),
+                        new Platform(400, -1100, PlatformType.Large90, w),
+                        new Platform(400, -1300, PlatformType.Large90, w),
+                        // right wall
+                        new Platform(2395, 300, PlatformType.Large90, w),
+                        new Platform(2395, 100, PlatformType.Large90, w),
+                        new Platform(2395, -100, PlatformType.Large90, w),
+                        new Platform(2395, -300, PlatformType.Large90, w),
+                        new Platform(2395, -500, PlatformType.Large90, w),
+                        new Platform(2395, -700, PlatformType.Large90, w),
+                        new Platform(2395, -900, PlatformType.Large90, w),
+                        new Platform(2395, -1100, PlatformType.Large90, w),
+                        new Platform(2395, -1300, PlatformType.Large90, w),
+                        // staircase 1
+                        new Platform(800, 300, PlatformType.Large, w),
+                        new Platform(800, 300, PlatformType.Large90, w),
+                        new Platform(1000, 100, PlatformType.Large, w),
+                        new Platform(1000, 100, PlatformType.Large90, w),
+                        new Platform(1200, -100, PlatformType.Large, w),
+                        new Platform(1200, -100, PlatformType.Large90, w),
+                        new Platform(1400, -300, PlatformType.Large, w),
+                        new Platform(1400, -300, PlatformType.Large90, w),
+                        new Platform(1600, -500, PlatformType.Large, w),
+                        new Platform(1600, -500, PlatformType.Large90, w),
+                        new Platform(1800, -700, PlatformType.Large, w),
+                        new Platform(1800, -700, PlatformType.Large90, w),
+                        new Platform(2000, -900, PlatformType.Large, w),
+                        new Platform(2000, -900, PlatformType.Large90, w),
+                        // staircase 2
+                        new Platform(2200, -700, PlatformType.Large, w),
+                        new Platform(2200, -700, PlatformType.Large90, w),
+                        new Platform(2000, -500, PlatformType.Large, w),
+                        new Platform(2000, -500, PlatformType.Large90, w),
+                        new Platform(1800, -300, PlatformType.Large, w),
+                        new Platform(1800, -300, PlatformType.Large90, w),
+                        new Platform(1600, -100, PlatformType.Large, w),
+                        new Platform(1600, -100, PlatformType.Large90, w),
+                        new Platform(1400, 100, PlatformType.Large, w),
+                        new Platform(1400, 100, PlatformType.Large90, w),
+                        // staircase 3
+                        new Platform(1600, 300, PlatformType.Large, w),
+                        new Platform(1600, 300, PlatformType.Large90, w),
+                        new Platform(1800, 100, PlatformType.Large, w),
+                        new Platform(1800, 100, PlatformType.Large90, w),
+                        new Platform(2000, -100, PlatformType.Large, w),
+                        new Platform(2000, -100, PlatformType.Large90, w),
+                        // staircase 4
+                        new Platform(2200, 100, PlatformType.Large, w),
+                        new Platform(2200, 100, PlatformType.Large90, w),
+                        new Platform(2000, 100, PlatformType.Large, w),
+                    };
+                    goal = new Goal(2300, 400, w);
+                    txts = new List<SpriteText>() {
+                        new SpriteText(600, 300, "Staircase", w),
                     };
                     break;
                 case LevelNumber.L8:
