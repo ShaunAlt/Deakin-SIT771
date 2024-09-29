@@ -693,8 +693,67 @@ namespace _7_3_CustomProgramCode
                     };
                     break;
                 case LevelNumber.L8:
+                    // tiny sine wave
                     platforms = new List<Platform>(){
-
+                        // floor
+                        new Platform(0, 500, PlatformType.Large, w),
+                        new Platform(200, 500, PlatformType.Large, w),
+                        new Platform(400, 500, PlatformType.Large, w),
+                        new Platform(600, 500, PlatformType.Large, w),
+                        new Platform(800, 500, PlatformType.Large, w),
+                        new Platform(1000, 500, PlatformType.Large, w),
+                        new Platform(1200, 500, PlatformType.Large, w),
+                        new Platform(1400, 500, PlatformType.Large, w),
+                        new Platform(1600, 500, PlatformType.Large, w),
+                        new Platform(1800, 500, PlatformType.Large, w),
+                        new Platform(2000, 500, PlatformType.Large, w),
+                        new Platform(2200, 500, PlatformType.Large, w),
+                        new Platform(2400, 500, PlatformType.Large, w),
+                        new Platform(2600, 500, PlatformType.Large, w),
+                        new Platform(2800, 500, PlatformType.Large, w),
+                        new Platform(3000, 500, PlatformType.Large, w),
+                        new Platform(3200, 500, PlatformType.Large, w),
+                        new Platform(3400, 500, PlatformType.Large, w),
+                        new Platform(3600, 500, PlatformType.Large, w),
+                        new Platform(3800, 500, PlatformType.Large, w),
+                        // left wall
+                        new Platform(0, 300, PlatformType.Large90, w),
+                        new Platform(0, 100, PlatformType.Large90, w),
+                        new Platform(0, -100, PlatformType.Large90, w),
+                        new Platform(0, -300, PlatformType.Large90, w),
+                        new Platform(0, -500, PlatformType.Large90, w),
+                        new Platform(0, -700, PlatformType.Large90, w),
+                        new Platform(0, -900, PlatformType.Large90, w),
+                        new Platform(0, -1100, PlatformType.Large90, w),
+                        new Platform(0, -1300, PlatformType.Large90, w),
+                        // right wall
+                        new Platform(3995, 300, PlatformType.Large90, w),
+                        new Platform(3995, 100, PlatformType.Large90, w),
+                        new Platform(3995, -100, PlatformType.Large90, w),
+                        new Platform(3995, -300, PlatformType.Large90, w),
+                        new Platform(3995, -500, PlatformType.Large90, w),
+                        new Platform(3995, -700, PlatformType.Large90, w),
+                        new Platform(3995, -900, PlatformType.Large90, w),
+                        new Platform(3995, -1100, PlatformType.Large90, w),
+                        new Platform(3995, -1300, PlatformType.Large90, w),
+                        // platforms
+                        new Platform(300, 250, PlatformType.Tiny, w),
+                        new Platform(600, 0, PlatformType.Tiny, w),
+                        new Platform(900, -250, PlatformType.Tiny, w),
+                        new Platform(1200, -500, PlatformType.Tiny, w),
+                        new Platform(1500, -250, PlatformType.Tiny, w),
+                        new Platform(1800, 0, PlatformType.Tiny, w),
+                        new Platform(2100, -250, PlatformType.Tiny, w),
+                        new Platform(2400, -500, PlatformType.Tiny, w),
+                        new Platform(2700, -250, PlatformType.Tiny, w),
+                        new Platform(3000, 0, PlatformType.Tiny, w),
+                        new Platform(3300, -250, PlatformType.Tiny, w),
+                        new Platform(3600, -500, PlatformType.Tiny, w),
+                        new Platform(3900, -250, PlatformType.Tiny, w),
+                    };
+                    goal = new Goal(3900, -350, w);
+                    txts = new List<SpriteText>() {
+                        new SpriteText(600, 300, "Tiny Zig-Zag", w),
                     };
                     break;
                 case LevelNumber.L9:
