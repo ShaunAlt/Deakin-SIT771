@@ -472,8 +472,53 @@ namespace _7_3_CustomProgramCode
                     };
                     break;
                 case LevelNumber.L4:
+                    // spiral pattern
                     platforms = new List<Platform>(){
-
+                        // floor
+                        new Platform(0, 500, PlatformType.Large, w),
+                        new Platform(200, 500, PlatformType.Large, w),
+                        new Platform(400, 500, PlatformType.Large, w),
+                        new Platform(600, 500, PlatformType.Large, w),
+                        new Platform(800, 500, PlatformType.Large, w),
+                        new Platform(1000, 500, PlatformType.Large, w),
+                        new Platform(1200, 500, PlatformType.Large, w),
+                        new Platform(1400, 500, PlatformType.Large, w),
+                        new Platform(1600, 500, PlatformType.Large, w),
+                        // left wall
+                        new Platform(0, 300, PlatformType.Large90, w),
+                        new Platform(0, 100, PlatformType.Large90, w),
+                        new Platform(0, -100, PlatformType.Large90, w),
+                        new Platform(0, -300, PlatformType.Large90, w),
+                        new Platform(0, -500, PlatformType.Large90, w),
+                        new Platform(0, -700, PlatformType.Large90, w),
+                        new Platform(0, -900, PlatformType.Large90, w),
+                        new Platform(0, -1100, PlatformType.Large90, w),
+                        new Platform(0, -1300, PlatformType.Large90, w),
+                        // right wall
+                        new Platform(1795, 300, PlatformType.Large90, w),
+                        new Platform(1795, 100, PlatformType.Large90, w),
+                        new Platform(1795, -100, PlatformType.Large90, w),
+                        new Platform(1795, -300, PlatformType.Large90, w),
+                        new Platform(1795, -500, PlatformType.Large90, w),
+                        new Platform(1795, -700, PlatformType.Large90, w),
+                        new Platform(1795, -900, PlatformType.Large90, w),
+                        new Platform(1795, -1100, PlatformType.Large90, w),
+                        new Platform(1795, -1300, PlatformType.Large90, w),
+                        // platforms (spiral)
+                        new Platform(400, 300, PlatformType.Small, w),
+                        new Platform(700, 200, PlatformType.Small, w),
+                        new Platform(1000, 50, PlatformType.Small, w),
+                        new Platform(1300, -100, PlatformType.Small, w),
+                        new Platform(1500, -350, PlatformType.Small, w),
+                        new Platform(1300, -600, PlatformType.Small, w),
+                        new Platform(1000, -750, PlatformType.Small, w),
+                        new Platform(700, -900, PlatformType.Small, w),
+                        new Platform(400, -1000, PlatformType.Small, w),
+                        new Platform(100, -1000, PlatformType.Small, w),
+                    };
+                    goal = new Goal(124, -1100, w);
+                    txts = new List<SpriteText>() {
+                        new SpriteText(600, 300, "Get Twisty", w),
                     };
                     break;
                 case LevelNumber.L5:
