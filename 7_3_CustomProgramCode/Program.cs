@@ -26,6 +26,7 @@ using System;
 using SplashKitSDK;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace _7_3_CustomProgramCode
 {
@@ -98,6 +99,11 @@ namespace _7_3_CustomProgramCode
             if (score > 0) { _scores.Add(new Score(score, lvl)); }
         }
 
+        public void AddScore(LevelNumber lvl, int score, DateTime datetime)
+        {
+            _scores.Add(new Score(score, lvl, datetime));
+        }
+
         public static Account GetAccount(string name)
         {
             foreach(Account a in accounts)
@@ -158,6 +164,78 @@ namespace _7_3_CustomProgramCode
                 ) { bestscore = s; }
             }
             return bestscore;
+        }
+
+        public static void ReadData(string filename)
+        {
+            XDocument? doc;
+            try
+            {
+                doc = XDocument.Load(filename);
+            }
+            catch {
+                return;
+            }
+
+            if (doc == null) { return; }
+            var accounts = doc.Element("Accounts")?.Elements("Account");
+            if (accounts == null) {
+                return;
+            }
+            foreach (XElement account in accounts)
+            {
+                // get the name of the account
+                string name = account.Element("Name")?.Value;
+                Account a = Account.GetAccount(name);
+                Console.WriteLine($"Account {a} - name = {a.name}");
+
+                var scores = account.Element("Scores")?.Elements("Score");
+                if (scores != null)
+                {
+                    foreach (var score in scores)
+                    {
+                        Console.WriteLine($"Score {score}");
+                        a.AddScore(
+                            (LevelNumber) Convert.ToInt32(score.Attribute("Level")?.Value),
+                            Convert.ToInt32(score.Attribute("Score")?.Value),
+                            DateTime.Parse(score.Attribute("DateTime")?.Value)
+                        );
+                    }
+                }
+            }
+            Console.WriteLine("read data");
+            foreach (Account _a in Account.accounts)
+            {
+                Console.WriteLine($"Account: {_a.name}");
+                foreach (Score s in _a.scores)
+                {
+                    Console.WriteLine($"| - Score: {s.level} -> {s.score} ({s.datetime})");
+                }
+            }
+        }
+
+        public static void SaveData(List<Account> accounts, string filename)
+        {
+            // save the player accounts to a file
+            XDocument doc = new XDocument(
+                new XElement("Accounts",
+                    accounts.Select(a =>
+                        new XElement("Account",
+                            new XElement("Name", a.name),
+                            new XElement("Scores",
+                                a.scores.Select(s =>
+                                    new XElement("Score",
+                                        new XAttribute("Level", (int)s.level),
+                                        new XAttribute("Score", s.score),
+                                        new XAttribute("DateTime", s.datetime)
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+            doc.Save(filename);
         }
     }
 
@@ -888,7 +966,7 @@ namespace _7_3_CustomProgramCode
             {
                 // close if score <= 0
                 if (score <= 0) { return -3; }
-                
+
                 // Process SplashKit Events
                 SplashKit.ProcessEvents();
                 w.Clear(Color.White);
@@ -1178,12 +1256,17 @@ namespace _7_3_CustomProgramCode
     {
         public static void Main()
         {
+            // data file name
+            string filename = "test2.xml";
             // create window
             Window w = new Window("Game Window", 1200, 800);
 
             // initialize screen
             // Screen s = Screen.Login;
             Screen s = Screen.Lvl1; // testing
+
+            // read data
+            Account.ReadData(filename);
 
             // initialize account logged in
             // Account? a = null;
@@ -1327,6 +1410,7 @@ namespace _7_3_CustomProgramCode
 
             // Close game window
             w.Close();
+            Account.SaveData(Account.accounts, filename);
         }
 
         public static Account? ScreenLogin(Window w)
@@ -1636,6 +1720,12 @@ namespace _7_3_CustomProgramCode
             _level = level;
 
             // set score value that the player achieved
+            _score = score;
+        }
+        public Score(int score, LevelNumber level, DateTime datetime)
+        {
+            _datetime = datetime;
+            _level = level;
             _score = score;
         }
     }
