@@ -417,7 +417,58 @@ namespace _7_3_CustomProgramCode
                     break;
                 case LevelNumber.L3:
                     platforms = new List<Platform>(){
-
+                        // floor
+                        new Platform(0, 500, PlatformType.Large, w),
+                        new Platform(200, 500, PlatformType.Large, w),
+                        new Platform(400, 500, PlatformType.Large, w),
+                        new Platform(600, 500, PlatformType.Large, w),
+                        new Platform(800, 500, PlatformType.Large, w),
+                        new Platform(1000, 500, PlatformType.Large, w),
+                        new Platform(1200, 500, PlatformType.Large, w),
+                        new Platform(1400, 500, PlatformType.Large, w),
+                        new Platform(1600, 500, PlatformType.Large, w),
+                        new Platform(1800, 500, PlatformType.Large, w),
+                        // left wall
+                        new Platform(0, 300, PlatformType.Large90, w),
+                        new Platform(0, 100, PlatformType.Large90, w),
+                        new Platform(0, -100, PlatformType.Large90, w),
+                        new Platform(0, -300, PlatformType.Large90, w),
+                        new Platform(0, -500, PlatformType.Large90, w),
+                        // right wall
+                        new Platform(1995, 300, PlatformType.Large90, w),
+                        new Platform(1995, 100, PlatformType.Large90, w),
+                        new Platform(1995, -100, PlatformType.Large90, w),
+                        new Platform(1995, -300, PlatformType.Large90, w),
+                        new Platform(1995, -500, PlatformType.Large90, w),
+                        // centre divider
+                        new Platform(995, 300, PlatformType.Large90, w),
+                        new Platform(995, 100, PlatformType.Large90, w),
+                        new Platform(995, -100, PlatformType.Large90, w),
+                        new Platform(995, -300, PlatformType.Large90, w),
+                        // little platforms
+                        new Platform(200, 300, PlatformType.Small, w),
+                        new Platform(400, 100, PlatformType.Small, w),
+                        new Platform(600, -100, PlatformType.Small, w),
+                        new Platform(800, -300, PlatformType.Small, w),
+                        // large run 1
+                        new Platform(1000, -100, PlatformType.Large, w),
+                        new Platform(1200, -100, PlatformType.Large, w),
+                        new Platform(1400, -100, PlatformType.Large, w),
+                        new Platform(1600, -100, PlatformType.Large, w),
+                        // large run 2
+                        new Platform(1200, 100, PlatformType.Large, w),
+                        new Platform(1400, 100, PlatformType.Large, w),
+                        new Platform(1600, 100, PlatformType.Large, w),
+                        new Platform(1800, 100, PlatformType.Large, w),
+                        // large run 3
+                        new Platform(1000, 300, PlatformType.Large, w),
+                        new Platform(1200, 300, PlatformType.Large, w),
+                        new Platform(1400, 300, PlatformType.Large, w),
+                        new Platform(1600, 300, PlatformType.Large, w),
+                    };
+                    goal = new Goal(1100, 400, w);
+                    txts = new List<SpriteText>() {
+                        new SpriteText(600, 300, "Get Over", w),
                     };
                     break;
                 case LevelNumber.L4:
