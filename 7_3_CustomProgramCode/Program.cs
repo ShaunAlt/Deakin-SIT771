@@ -1090,16 +1090,16 @@ namespace _7_3_CustomProgramCode
             else { _txt = bitmap_name; }
             _pos = new Point2D(){ X = x, Y = y };
         }
-        public bool CheckCollision(Sprite other)
-        {
-            if ((_bitmap == null) || (other.bitmap == null)) { return false; }
-            return SplashKit.BitmapCollision(
-                _bitmap,
-                _pos,
-                other.bitmap,
-                other.pos
-            );
-        }
+        // public bool CheckCollision(Sprite other)
+        // {
+        //     if ((_bitmap == null) || (other.bitmap == null)) { return false; }
+        //     return SplashKit.BitmapCollision(
+        //         _bitmap,
+        //         _pos,
+        //         other.bitmap,
+        //         other.pos
+        //     );
+        // }
         public void Draw()
         {
             if (_bitmap != null)
@@ -1148,6 +1148,15 @@ namespace _7_3_CustomProgramCode
 
     public class Platform : Sprite
     {
+        public Rectangle collision_rect { get { 
+            return new SplashKitSDK.Rectangle()
+            {
+                X = pos.X,
+                Y = pos.Y,
+                Width = _bitmap.Width,
+                Height = _bitmap.Height
+            };
+        }}
         public Platform(
                 float x,
                 float y,
@@ -1183,12 +1192,39 @@ namespace _7_3_CustomProgramCode
 
     public class Player : Sprite
     {
+        public Rectangle collision_rect { get { 
+            return new SplashKitSDK.Rectangle()
+            {
+                X = pos.X,
+                Y = pos.Y,
+                Width = _bitmap.Width,
+                Height = _bitmap.Height
+            };
+        }}
         public Player(
             float x,
             float y,
             Window window
         ) : base(x, y, "Resources/images/Player.png", window)
         {
+        }
+        public bool CheckCollision(Platform other)
+        {
+            // return collision_rect.IntersectsWith(other.collision_rect);
+            return SplashKit.BitmapRectangleCollision(
+                _bitmap,
+                _pos,
+                other.collision_rect
+            );
+        }
+        public bool CheckCollision(Goal other)
+        {
+            return SplashKit.BitmapCollision(
+                _bitmap,
+                _pos,
+                other.bitmap,
+                other.pos
+            );
         }
     }
 
