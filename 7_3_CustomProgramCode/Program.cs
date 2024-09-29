@@ -122,7 +122,7 @@ namespace _7_3_CustomProgramCode
             }
 
             // sort the scores in descending order based on score
-            List<Score> scores_sorted = scores.OrderBy(s1 => s1.score).ToList();
+            List<Score> scores_sorted = scores.OrderBy(s1 => -1 * s1.score).ToList();
 
             List<Score> scores_sorted_slice = new List<Score>();
             for (int i = 0; i < num_max; i++)
@@ -162,6 +162,7 @@ namespace _7_3_CustomProgramCode
         public List<Platform> platforms;
         public Player player;
         public Goal goal;
+        public List<SpriteText> txts;
 
         public Level(LevelNumber lvl, Window w)
         {
@@ -206,10 +207,132 @@ namespace _7_3_CustomProgramCode
                         new Platform(2600, -100, PlatformType.Large, w),
                     };
                     goal = new Goal(2600, -200, w);
+                    txts = new List<SpriteText>() {
+                        new SpriteText(600, 300, "Jump along the platforms to the goal", w),
+                    };
                     break;
                 case LevelNumber.L1:
                     platforms = new List<Platform>(){
-
+                        // left wall
+                        new Platform(0, 0, PlatformType.Large90, w),
+                        new Platform(0, 200, PlatformType.Large90, w),
+                        new Platform(0, 400, PlatformType.Large90, w),
+                        new Platform(0, 600, PlatformType.Large90, w),
+                        new Platform(0, 800, PlatformType.Large90, w),
+                        new Platform(0, 1000, PlatformType.Large90, w),
+                        new Platform(0, 1200, PlatformType.Large90, w),
+                        new Platform(0, 1400, PlatformType.Large90, w),
+                        new Platform(0, 1600, PlatformType.Large90, w),
+                        new Platform(0, 1800, PlatformType.Large90, w),
+                        new Platform(0, 2000, PlatformType.Large90, w),
+                        new Platform(0, 2200, PlatformType.Large90, w),
+                        new Platform(0, 2400, PlatformType.Large90, w),
+                        new Platform(0, 2600, PlatformType.Large90, w),
+                        new Platform(0, 2800, PlatformType.Large90, w),
+                        new Platform(0, 3000, PlatformType.Large90, w),
+                        new Platform(0, 3200, PlatformType.Large90, w),
+                        new Platform(0, 3400, PlatformType.Large90, w),
+                        new Platform(0, 3600, PlatformType.Large90, w),
+                        new Platform(0, 3800, PlatformType.Large90, w),
+                        // right wall
+                        new Platform(1195, 0, PlatformType.Large90, w),
+                        new Platform(1195, 200, PlatformType.Large90, w),
+                        new Platform(1195, 400, PlatformType.Large90, w),
+                        new Platform(1195, 600, PlatformType.Large90, w),
+                        new Platform(1195, 800, PlatformType.Large90, w),
+                        new Platform(1195, 1000, PlatformType.Large90, w),
+                        new Platform(1195, 1200, PlatformType.Large90, w),
+                        new Platform(1195, 1400, PlatformType.Large90, w),
+                        new Platform(1195, 1600, PlatformType.Large90, w),
+                        new Platform(1195, 1800, PlatformType.Large90, w),
+                        new Platform(1195, 2000, PlatformType.Large90, w),
+                        new Platform(1195, 2200, PlatformType.Large90, w),
+                        new Platform(1195, 2400, PlatformType.Large90, w),
+                        new Platform(1195, 2600, PlatformType.Large90, w),
+                        new Platform(1195, 2800, PlatformType.Large90, w),
+                        new Platform(1195, 3000, PlatformType.Large90, w),
+                        new Platform(1195, 3200, PlatformType.Large90, w),
+                        new Platform(1195, 3400, PlatformType.Large90, w),
+                        new Platform(1195, 3600, PlatformType.Large90, w),
+                        new Platform(1195, 3800, PlatformType.Large90, w),
+                        // platform - start
+                        new Platform(400, 500, PlatformType.Large, w),
+                        new Platform(600, 500, PlatformType.Large, w),
+                        // lvl 1
+                        new Platform(0, 700, PlatformType.Large, w),
+                        new Platform(200, 700, PlatformType.Large, w),
+                        new Platform(800, 700, PlatformType.Large, w),
+                        new Platform(1000, 700, PlatformType.Large, w),
+                        // lvl 2
+                        new Platform(400, 900, PlatformType.Large, w),
+                        new Platform(600, 900, PlatformType.Large, w),
+                        // lvl 3
+                        new Platform(0, 1100, PlatformType.Large, w),
+                        new Platform(200, 1100, PlatformType.Large, w),
+                        new Platform(800, 1100, PlatformType.Large, w),
+                        new Platform(1000, 1100, PlatformType.Large, w),
+                        // lvl 4
+                        new Platform(400, 1300, PlatformType.Large, w),
+                        new Platform(600, 1300, PlatformType.Large, w),
+                        // lvl 5
+                        new Platform(0, 1500, PlatformType.Large, w),
+                        new Platform(200, 1500, PlatformType.Large, w),
+                        new Platform(800, 1500, PlatformType.Large, w),
+                        new Platform(1000, 1500, PlatformType.Large, w),
+                        // lvl 6
+                        new Platform(400, 1700, PlatformType.Large, w),
+                        new Platform(600, 1700, PlatformType.Large, w),
+                        // lvl 7
+                        new Platform(0, 1900, PlatformType.Large, w),
+                        new Platform(200, 1900, PlatformType.Large, w),
+                        new Platform(800, 1900, PlatformType.Large, w),
+                        new Platform(1000, 1900, PlatformType.Large, w),
+                        // lvl 8
+                        new Platform(400, 2100, PlatformType.Large, w),
+                        new Platform(600, 2100, PlatformType.Large, w),
+                        // lvl 9
+                        new Platform(0, 2300, PlatformType.Large, w),
+                        new Platform(200, 2300, PlatformType.Large, w),
+                        new Platform(800, 2300, PlatformType.Large, w),
+                        new Platform(1000, 2300, PlatformType.Large, w),
+                        // lvl 10
+                        new Platform(400, 2500, PlatformType.Large, w),
+                        new Platform(600, 2500, PlatformType.Large, w),
+                        // lvl 11
+                        new Platform(0, 2700, PlatformType.Large, w),
+                        new Platform(200, 2700, PlatformType.Large, w),
+                        new Platform(800, 2700, PlatformType.Large, w),
+                        new Platform(1000, 2700, PlatformType.Large, w),
+                        // lvl 12
+                        new Platform(400, 2900, PlatformType.Large, w),
+                        new Platform(600, 2900, PlatformType.Large, w),
+                        // lvl 13
+                        new Platform(0, 3100, PlatformType.Large, w),
+                        new Platform(200, 3100, PlatformType.Large, w),
+                        new Platform(800, 3100, PlatformType.Large, w),
+                        new Platform(1000, 3100, PlatformType.Large, w),
+                        // lvl 14
+                        new Platform(400, 3300, PlatformType.Large, w),
+                        new Platform(600, 3300, PlatformType.Large, w),
+                        // lvl 15
+                        new Platform(0, 3500, PlatformType.Large, w),
+                        new Platform(200, 3500, PlatformType.Large, w),
+                        new Platform(800, 3500, PlatformType.Large, w),
+                        new Platform(1000, 3500, PlatformType.Large, w),
+                        // lvl 16
+                        new Platform(400, 3700, PlatformType.Large, w),
+                        new Platform(600, 3700, PlatformType.Large, w),
+                        // floor
+                        new Platform(0, 4000, PlatformType.Large, w),
+                        new Platform(200, 4000, PlatformType.Large, w),
+                        new Platform(400, 4000, PlatformType.Large, w),
+                        new Platform(600, 4000, PlatformType.Large, w),
+                        new Platform(800, 4000, PlatformType.Large, w),
+                        new Platform(1000, 4000, PlatformType.Large, w),
+                    };
+                    goal = new Goal(600, 3900, w);
+                    txts = new List<SpriteText>() {
+                        new SpriteText(600, 300, "Go Down", w),
                     };
                     break;
                 case LevelNumber.L2:
@@ -259,6 +382,7 @@ namespace _7_3_CustomProgramCode
         {
             List<Sprite> sprites = new List<Sprite>();
             foreach (Platform p in platforms) { sprites.Add(p); }
+            foreach (SpriteText t in txts) { sprites.Add(t); }
             sprites.Add(goal);
             return sprites;
         }
@@ -358,13 +482,15 @@ namespace _7_3_CustomProgramCode
 
     public abstract class Sprite
     {
-        protected Bitmap _bitmap;
+        protected Bitmap? _bitmap;
         protected Point2D _pos;
+        protected string? _txt;
         protected Window _window;
-        public Bitmap bitmap { get { return _bitmap; } }
+        public Bitmap? bitmap { get { return _bitmap; } }
+        public string? txt { get { return _txt; } }
         public Point2D pos { get { return _pos; } }
-        public double height { get { return _bitmap.Height; } }
-        public double width { get { return _bitmap.Width; } }
+        public double height { get { if (_bitmap == null) { return 0; } else { return _bitmap.Height; } } }
+        public double width { get { if (_bitmap == null) { return 0; } else { return _bitmap.Width; } } }
         public Sprite(
             float x,
             float y,
@@ -373,14 +499,19 @@ namespace _7_3_CustomProgramCode
         )
         {
             _window = window;
-            _bitmap = new Bitmap(
-                bitmap_name.Split('/').Last().Split('.')[0], // image name
-                bitmap_name // file directory + name
-            );
+            if (bitmap_name.StartsWith("Resources/images"))
+            {
+                _bitmap = new Bitmap(
+                    bitmap_name.Split('/').Last().Split('.')[0], // image name
+                    bitmap_name // file directory + name
+                );
+            }
+            else { _txt = bitmap_name; }
             _pos = new Point2D(){ X = x, Y = y };
         }
         public bool CheckCollision(Sprite other)
         {
+            if ((_bitmap == null) || (other.bitmap == null)) { return false; }
             return SplashKit.BitmapCollision(
                 _bitmap,
                 _pos,
@@ -390,12 +521,27 @@ namespace _7_3_CustomProgramCode
         }
         public void Draw()
         {
-            SplashKit.DrawBitmapOnWindow(
-                _window,
-                _bitmap,
-                _pos.X,
-                _pos.Y
-            );
+            if (_bitmap != null)
+            {
+                SplashKit.DrawBitmapOnWindow(
+                    _window,
+                    _bitmap,
+                    _pos.X,
+                    _pos.Y
+                );
+            }
+            else if (_txt != null)
+            {
+                SplashKit.DrawTextOnWindow(
+                    _window,
+                    _txt,
+                    Color.Black,
+                    "Arial",
+                    20,
+                    _pos.X - (_txt.Length * 4),
+                    _pos.Y - 7
+                );
+            }
         }
         public virtual void Update(double delta_x, double delta_y, bool reverse = false)
         {
@@ -477,6 +623,19 @@ namespace _7_3_CustomProgramCode
         }
     }
 
+    public class SpriteText : Sprite
+    {
+        public SpriteText(
+            float x,
+            float y,
+            string text,
+            Window window
+        ) : base(x, y, text, window)
+        {
+
+        }
+    }
+
     /* ************************************************************************
      * Level Number Enumerator
      * ***********************************************************************/
@@ -521,7 +680,7 @@ namespace _7_3_CustomProgramCode
 
             // initialize screen
             // Screen s = Screen.Login;
-            Screen s = Screen.Lvl0; // testing
+            Screen s = Screen.Lvl1; // testing
 
             // initialize account logged in
             // Account? a = null;
@@ -848,8 +1007,8 @@ namespace _7_3_CustomProgramCode
                     ui.Add(new UIText(hs != null ? $"{hs.score}" : "Not Set", x_vals[j], y_vals[i] - 65, 240, 30, w));
                     ui.Add(new UIText("High Scores:", x_vals[j], y_vals[i] - 20, 240, 30, w));
                     ui.Add(new UIText(hs_list.Count >= 1 ? $"1st: {hs_list[0].score}" : "1st: Not Set", x_vals[j], y_vals[i] + 10, 240, 30, w));
-                    ui.Add(new UIText(hs_list.Count >= 2 ? $"2nd: {hs_list[0].score}" : "2nd: Not Set", x_vals[j], y_vals[i] + 40, 240, 30, w));
-                    ui.Add(new UIText(hs_list.Count >= 3 ? $"3rd: {hs_list[0].score}" : "3rd: Not Set", x_vals[j], y_vals[i] + 70, 240, 30, w));
+                    ui.Add(new UIText(hs_list.Count >= 2 ? $"2nd: {hs_list[1].score}" : "2nd: Not Set", x_vals[j], y_vals[i] + 40, 240, 30, w));
+                    ui.Add(new UIText(hs_list.Count >= 3 ? $"3rd: {hs_list[2].score}" : "3rd: Not Set", x_vals[j], y_vals[i] + 70, 240, 30, w));
                 }
             }
 
