@@ -522,8 +522,60 @@ namespace _7_3_CustomProgramCode
                     };
                     break;
                 case LevelNumber.L5:
+                    // tiny rise/fall
                     platforms = new List<Platform>(){
-
+                        // floor
+                        new Platform(0, 500, PlatformType.Large, w),
+                        new Platform(200, 500, PlatformType.Large, w),
+                        new Platform(400, 500, PlatformType.Large, w),
+                        new Platform(600, 500, PlatformType.Large, w),
+                        new Platform(800, 500, PlatformType.Large, w),
+                        new Platform(1000, 500, PlatformType.Large, w),
+                        new Platform(1200, 500, PlatformType.Large, w),
+                        new Platform(1400, 500, PlatformType.Large, w),
+                        new Platform(1600, 500, PlatformType.Large, w),
+                        new Platform(1800, 500, PlatformType.Large, w),
+                        // left wall
+                        new Platform(0, 300, PlatformType.Large90, w),
+                        new Platform(0, 100, PlatformType.Large90, w),
+                        new Platform(0, -100, PlatformType.Large90, w),
+                        new Platform(0, -300, PlatformType.Large90, w),
+                        new Platform(0, -500, PlatformType.Large90, w),
+                        new Platform(0, -700, PlatformType.Large90, w),
+                        new Platform(0, -900, PlatformType.Large90, w),
+                        new Platform(0, -1100, PlatformType.Large90, w),
+                        new Platform(0, -1300, PlatformType.Large90, w),
+                        // right wall
+                        new Platform(1995, 300, PlatformType.Large90, w),
+                        new Platform(1995, 100, PlatformType.Large90, w),
+                        new Platform(1995, -100, PlatformType.Large90, w),
+                        new Platform(1995, -300, PlatformType.Large90, w),
+                        new Platform(1995, -500, PlatformType.Large90, w),
+                        new Platform(1995, -700, PlatformType.Large90, w),
+                        new Platform(1995, -900, PlatformType.Large90, w),
+                        new Platform(1995, -1100, PlatformType.Large90, w),
+                        new Platform(1995, -1300, PlatformType.Large90, w),
+                        // left platforms
+                        new Platform(300, 250, PlatformType.Tiny, w),
+                        new Platform(300, 0, PlatformType.Tiny, w),
+                        new Platform(300, -250, PlatformType.Tiny, w),
+                        new Platform(300, -500, PlatformType.Tiny, w),
+                        new Platform(300, -750, PlatformType.Tiny, w),
+                        new Platform(300, -1000, PlatformType.Tiny, w),
+                        // central platform
+                        new Platform(600, -1250, PlatformType.Large, w),
+                        new Platform(800, -1250, PlatformType.Large, w),
+                        new Platform(1000, -1250, PlatformType.Large, w),
+                        new Platform(1200, -1250, PlatformType.Large, w),
+                        // right platforms
+                        new Platform(1700, -1000, PlatformType.Tiny, w),
+                        new Platform(1700, -750, PlatformType.Tiny, w),
+                        new Platform(1700, -500, PlatformType.Tiny, w),
+                        new Platform(1675, -250, PlatformType.Medium, w),
+                    };
+                    goal = new Goal(1725, -350, w);
+                    txts = new List<SpriteText>() {
+                        new SpriteText(600, 300, "Get Tiny", w),
                     };
                     break;
                 case LevelNumber.L6:
