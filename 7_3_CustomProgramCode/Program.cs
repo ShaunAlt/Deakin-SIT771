@@ -29,6 +29,13 @@ using System.Collections.Generic;
 
 namespace _7_3_CustomProgramCode
 {
+    public class InvalidLevelNumberException : System.Exception
+    {
+        public InvalidLevelNumberException() { }
+        public InvalidLevelNumberException(string message) : base(message) { }
+        public InvalidLevelNumberException(string message, System.Exception inner) : base(message, inner) { }
+    }
+
     /* ************************************************************************
      * Game Account
      * ***********************************************************************/
@@ -853,6 +860,8 @@ namespace _7_3_CustomProgramCode
                         new SpriteText(600, 300, "Ultra-Tiny Zig-Zag", w),
                     };
                     break;
+                default:
+                    throw new InvalidLevelNumberException($"Invalid level number {lvl}");
             }
         }
 
@@ -877,6 +886,9 @@ namespace _7_3_CustomProgramCode
             // loop while window is open
             while (!w.CloseRequested)
             {
+                // close if score <= 0
+                if (score <= 0) { return -3; }
+                
                 // Process SplashKit Events
                 SplashKit.ProcessEvents();
                 w.Clear(Color.White);
@@ -950,6 +962,19 @@ namespace _7_3_CustomProgramCode
                 if (l.player.CheckCollision(l.goal)) { return score; }
 
                 score--; // decrease score based on time
+
+                // draw text
+                string score_string = $"Current Score: {score}";
+                SplashKit.DrawTextOnWindow(
+                    w,
+                    score_string,
+                    Color.Black,
+                    "Arial",
+                    20,
+                    50,
+                    50
+                );
+
                 w.Refresh(60);
             }
 
