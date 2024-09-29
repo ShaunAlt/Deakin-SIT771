@@ -171,6 +171,7 @@ namespace _7_3_CustomProgramCode
             switch (lvl)
             {
                 case LevelNumber.L0:
+                    // basic platforms
                     platforms = new List<Platform>(){
                         new Platform(0, 100, PlatformType.Large90, w),
                         new Platform(0, 300, PlatformType.Large90, w),
@@ -212,6 +213,7 @@ namespace _7_3_CustomProgramCode
                     };
                     break;
                 case LevelNumber.L1:
+                    // go down
                     platforms = new List<Platform>(){
                         // left wall
                         new Platform(0, 0, PlatformType.Large90, w),
@@ -336,8 +338,81 @@ namespace _7_3_CustomProgramCode
                     };
                     break;
                 case LevelNumber.L2:
+                    // spiral
                     platforms = new List<Platform>(){
-
+                        // start
+                        new Platform(500, 500, PlatformType.Large, w),
+                        new Platform(500, 300, PlatformType.Large90, w),
+                        new Platform(500, 300, PlatformType.Large, w),
+                        // rise 1
+                        new Platform(700, 500, PlatformType.Large, w),
+                        new Platform(895, 300, PlatformType.Large90, w),
+                        new Platform(895, 100, PlatformType.Large90, w),
+                        new Platform(700, 100, PlatformType.Large, w),
+                        // new Platform(850, 300, PlatformType.Small, w),
+                        // flat 1
+                        new Platform(500, 100, PlatformType.Large, w),
+                        // drop 1
+                        new Platform(300, 100, PlatformType.Large, w),
+                        new Platform(300, 100, PlatformType.Large90, w),
+                        new Platform(300, 300, PlatformType.Large90, w),
+                        new Platform(300, 500, PlatformType.Large90, w),
+                        new Platform(300, 700, PlatformType.Large, w),
+                        // flat 2
+                        new Platform(500, 700, PlatformType.Large, w),
+                        new Platform(700, 700, PlatformType.Large, w),
+                        // rise 2
+                        new Platform(900, 700, PlatformType.Large, w),
+                        new Platform(1095, 500, PlatformType.Large90, w),
+                        new Platform(1095, 300, PlatformType.Large90, w),
+                        new Platform(1095, 100, PlatformType.Large90, w),
+                        new Platform(1095, -100, PlatformType.Large90, w),
+                        new Platform(900, -100, PlatformType.Large, w),
+                        new Platform(1050, 500, PlatformType.Small, w),
+                        new Platform(1050, 300, PlatformType.Small, w),
+                        new Platform(1050, 100, PlatformType.Small, w),
+                        // flat 3
+                        new Platform(700, -100, PlatformType.Large, w),
+                        new Platform(500, -100, PlatformType.Large, w),
+                        new Platform(300, -100, PlatformType.Large, w),
+                        // drop 2
+                        new Platform(100, -100, PlatformType.Large, w),
+                        new Platform(100, -100, PlatformType.Large90, w),
+                        new Platform(100, 100, PlatformType.Large90, w),
+                        new Platform(100, 300, PlatformType.Large90, w),
+                        new Platform(100, 500, PlatformType.Large90, w),
+                        new Platform(100, 700, PlatformType.Large90, w),
+                        new Platform(100, 900, PlatformType.Large, w),
+                        // flat 4
+                        new Platform(300, 900, PlatformType.Large, w),
+                        new Platform(500, 900, PlatformType.Large, w),
+                        new Platform(700, 900, PlatformType.Large, w),
+                        new Platform(900, 900, PlatformType.Large, w),
+                        // rise 3
+                        new Platform(1100, 900, PlatformType.Large, w),
+                        new Platform(1295, 700, PlatformType.Large90, w),
+                        new Platform(1295, 500, PlatformType.Large90, w),
+                        new Platform(1295, 300, PlatformType.Large90, w),
+                        new Platform(1295, 100, PlatformType.Large90, w),
+                        new Platform(1295, -100, PlatformType.Large90, w),
+                        new Platform(1295, -300, PlatformType.Large90, w),
+                        new Platform(1100, -300, PlatformType.Large, w),
+                        new Platform(1250, 700, PlatformType.Small, w),
+                        new Platform(1250, 500, PlatformType.Small, w),
+                        new Platform(1250, 300, PlatformType.Small, w),
+                        new Platform(1250, 100, PlatformType.Small, w),
+                        new Platform(1250, -100, PlatformType.Small, w),
+                        // end
+                        new Platform(900, -300, PlatformType.Large, w),
+                        new Platform(700, -300, PlatformType.Large, w),
+                        new Platform(500, -300, PlatformType.Large, w),
+                        new Platform(300, -300, PlatformType.Large, w),
+                        new Platform(100, -300, PlatformType.Large, w),
+                        new Platform(100, -300, PlatformType.Large90, w),
+                    };
+                    goal = new Goal(200, -200, w);
+                    txts = new List<SpriteText>() {
+                        new SpriteText(600, 300, "Get Out", w),
                     };
                     break;
                 case LevelNumber.L3:
@@ -903,16 +978,16 @@ namespace _7_3_CustomProgramCode
         {
             // create back button
             UIButton b_back = new UIButton("Back", 600, 750, 200, 60, w);
-            UIButton b_lvl0 = new UIButton("Play Level 0", 120, 175, 200, 60, w);
-            UIButton b_lvl1 = new UIButton("Play Level 1", 360, 175, 200, 60, w);
-            UIButton b_lvl2 = new UIButton("Play Level 2", 600, 175, 200, 60, w);
-            UIButton b_lvl3 = new UIButton("Play Level 3", 840, 175, 200, 60, w);
-            UIButton b_lvl4 = new UIButton("Play Level 4", 1080, 175, 200, 60, w);
-            UIButton b_lvl5 = new UIButton("Play Level 5", 120, 525, 200, 60, w);
-            UIButton b_lvl6 = new UIButton("Play Level 6", 360, 525, 200, 60, w);
-            UIButton b_lvl7 = new UIButton("Play Level 7", 600, 525, 200, 60, w);
-            UIButton b_lvl8 = new UIButton("Play Level 8", 840, 525, 200, 60, w);
-            UIButton b_lvl9 = new UIButton("Play Level 9", 1080, 525, 200, 60, w);
+            UIButton b_lvl0 = new UIButton("Play Level 1", 120, 175, 200, 60, w);
+            UIButton b_lvl1 = new UIButton("Play Level 2", 360, 175, 200, 60, w);
+            UIButton b_lvl2 = new UIButton("Play Level 3", 600, 175, 200, 60, w);
+            UIButton b_lvl3 = new UIButton("Play Level 4", 840, 175, 200, 60, w);
+            UIButton b_lvl4 = new UIButton("Play Level 5", 1080, 175, 200, 60, w);
+            UIButton b_lvl5 = new UIButton("Play Level 6", 120, 525, 200, 60, w);
+            UIButton b_lvl6 = new UIButton("Play Level 7", 360, 525, 200, 60, w);
+            UIButton b_lvl7 = new UIButton("Play Level 8", 600, 525, 200, 60, w);
+            UIButton b_lvl8 = new UIButton("Play Level 9", 840, 525, 200, 60, w);
+            UIButton b_lvl9 = new UIButton("Play Level 10", 1080, 525, 200, 60, w);
             List<UIBase> ui = new List<UIBase>(){
                 b_back,
                 b_lvl0,
@@ -942,7 +1017,7 @@ namespace _7_3_CustomProgramCode
                     int n = (5*i)+j;
                     Score? hs = a.GetScore(lvls[n]);
                     List<Score> hs_list = Account.GetScores(lvls[n]);
-                    ui.Add(new UIText($"Level {n}", x_vals[j], y_vals[i] - 125, 240, 40, w));
+                    ui.Add(new UIText($"Level {n+1}", x_vals[j], y_vals[i] - 125, 240, 40, w));
                     ui.Add(new UIText("Your Best:", x_vals[j], y_vals[i] - 85, 240, 30, w));
                     ui.Add(new UIText(hs != null ? $"{hs.score}" : "Not Set", x_vals[j], y_vals[i] - 65, 240, 30, w));
                 }
@@ -1002,7 +1077,7 @@ namespace _7_3_CustomProgramCode
                     int n = (5*i)+j;
                     Score? hs = a.GetScore(lvls[n]);
                     List<Score> hs_list = Account.GetScores(lvls[n]);
-                    ui.Add(new UIText($"Level {n}", x_vals[j], y_vals[i] - 125, 240, 40, w));
+                    ui.Add(new UIText($"Level {n+1}", x_vals[j], y_vals[i] - 125, 240, 40, w));
                     ui.Add(new UIText("Your Best:", x_vals[j], y_vals[i] - 85, 240, 30, w));
                     ui.Add(new UIText(hs != null ? $"{hs.score}" : "Not Set", x_vals[j], y_vals[i] - 65, 240, 30, w));
                     ui.Add(new UIText("High Scores:", x_vals[j], y_vals[i] - 20, 240, 30, w));
