@@ -1,232 +1,358 @@
-/* ****************************************************************************
- * 7.3 - Custom Program Code
- * Platformer Game.
- * 
- * The game features:
- * - A player character with a jumping and moving animation.
- * - Platforms that the player can jump on.
- * - Enemies that the player has to avoid.
- * - Power-ups that the player can collect.
- * - Sound effects and music.
- * - Score tracking and display.
- * - Levels with varying difficulty levels and obstacles.
- * - A pause menu with options to resume, restart, or quit the game.
- * - A game over screen with a score and option to play again.
- * - A high score system that saves and loads the top scores.
- * - Customizable game settings such as difficulty, sound effects, and music volume.
- * - A tutorial screen that explains the game's controls and rules.
- * 
- * Author: Shaun Altmann
+// ----------------------------------------------------------------------------
+// Purpose:
+// SIT771 T2 2024
+// 7.3 - Custom Program Code
+// 7.4 - Something Awesome
+//
+// Description:
+// This program runs a self-contained platformer game. The game saves and loads
+// player accounts and scores from an xml file. The game has 10 different
+// levels, each of which players are able to attempt, as well as instructions
+// on how to play the game. The game also has a highscores chart which displays
+// the highscore of the current player, as well as all-time highscores from all
+// players.
+//
+// Author: Shaun Altmann
+// ----------------------------------------------------------------------------
 
- All "Attributes / Fields" are private. All "Constants" are private. All properties are public read-only.
- All methods are commented on if they are public or private.
- * ***************************************************************************/
+// ----------------------------------------------------------------------------
+// Dependencies
+// ----------------------------------------------------------------------------
 
+// used for implementing fundamental C# functionality
 using System;
+
+// used for implementing SplashKit functionality
 using SplashKitSDK;
-using System.Collections;
-using System.Collections.Generic;
+
+// used for reading and writing XML save files
 using System.Xml.Linq;
 
+// ----------------------------------------------------------------------------
+// Main Program - Auto-Generated
+// ----------------------------------------------------------------------------
 namespace _7_3_CustomProgramCode
 {
+    /// <summary>
+    /// Raised when the program encounters an invalid <c>LevelNumber</c> enum
+    /// value.
+    /// </summary>
+    /// <see cref="LevelNumber"/>
     public class InvalidLevelNumberException : System.Exception
     {
         public InvalidLevelNumberException() { }
         public InvalidLevelNumberException(string message) : base(message) { }
-        public InvalidLevelNumberException(string message, System.Exception inner) : base(message, inner) { }
+        public InvalidLevelNumberException(
+            string message,
+            System.Exception inner
+        ) : base(message, inner) { }
     }
 
     /* ************************************************************************
      * Game Account
      * ***********************************************************************/
+    
+    /// <summary>
+    /// Represents a single player account in the game.
+    /// </summary>
+    /// <remarks>
+    /// Fields + Properties
+    /// <list type="bullet">
+    ///     <item>_accounts : <c>List &lt; Account &gt; </c></item>
+    ///     <item>Name : <c>string</c></item>
+    ///     <item>Scores : <c>List &lt; Score &gt; </c></item>
+    /// </list>
+    /// 
+    /// Methods
+    /// <list type="bullet">
+    ///     <item>Account(name) : <c>Account</c></item>
+    ///     <item>AddScore(lvl, score) : <c>void</c></item>
+    ///     <item>AddScore(lvl, score, datetime) : <c>void</c></item>
+    ///     <item>GetAccount(name) : <c>Account</c></item>
+    ///     <item>GetScore(lvl) : <c>Score | null</c></item>
+    ///     <item>GetScores(lvl, num_max) : <c> List &lt; Score &gt;</c></item>
+    ///     <item>ReadData(filename) : <c>void</c></item>
+    ///     <item>SaveData(filename) : <c>void</c></item>
+    /// </list>
+    /// </remarks>
     public class Account
     {
-        /*
-        Game Account
-        -
-        Represents a game account that can save and load high scores.
+        /// <summary>
+        /// Static collection of all accounts (including the current account if
+        /// the player is logged in) in the game.
+        /// </summary>
+        private static List<Account> _accounts = new List<Account>();
 
-        Attributes / Fields
-        -
-        - _name : `string`
-            - Name of the game account.
-        - _scores : `List<Score>`
-            - Collection of scores the player has achieved in the game.
+        /// <summary>
+        /// Name of the current player account.
+        /// </summary>
+        public string Name { get; private set; }
 
-        Constants
-        -
-        None
+        /// <summary>
+        /// Collection of all scores the current player account has achieved in
+        /// the game.
+        /// </summary>
+        public List<Score> Scores { get; private set; }
 
-        Methods
-        -
-        - Account(name) : `Account`
-            - Public Constructor Method.
-            - Creates a new player account with the specified name.
-
-        Properties
-        -
-        - name : `string`
-            - Name of the game account.
-        - scores : `List<Score>`
-            - Collection of scores the player has achieved in the game.
-        */
-
-        // **********
-        // Attributes
-        public static List<Account> accounts = new List<Account>();
-        private string _name;
-        private List<Score> _scores;
-
-        // **********
-        // Properties
-        public string name { get { return _name; } }
-        public List<Score> scores { get { return _scores; } }
-
-        // ***********
-        // Constructor
+        /// <summary>
+        /// Creates a new player account with the specified name.
+        /// </summary>
+        /// <param name="name">Name of the new player account.</param>
         public Account(string name)
         {
             // set the player name
-            _name = name;
+            Name = name;
 
             // initialize the scores of the player
-            _scores = new List<Score>();
+            Scores = new List<Score>();
         }
 
+        /// <summary>
+        /// Adds a new score for the given level to the current game account.
+        /// </summary>
+        /// <param name="lvl">Level the score was achieved on.</param>
+        /// <param name="score">Score that was achieved.</param>
         public void AddScore(LevelNumber lvl, int score)
         {
-            if (score > 0) { _scores.Add(new Score(score, lvl)); }
+            // only add the score if valid
+            if (score > 0) {
+                Scores.Add(new Score(score, lvl));
+            }
         }
 
+        /// <summary>
+        /// Adds a new score for the given level to the current game account.
+        /// </summary>
+        /// <param name="lvl">Level the score was achieved on.</param>
+        /// <param name="score">Score that was achieved.</param>
+        /// <param name="datetime">
+        ///     Date/Time that the score was achieved at.
+        /// </param>
         public void AddScore(LevelNumber lvl, int score, DateTime datetime)
         {
-            _scores.Add(new Score(score, lvl, datetime));
+            // only add the score if valid
+            if (score > 0)
+            {
+                Scores.Add(new Score(score, lvl, datetime));
+            }
         }
 
+        /// <summary>
+        /// Attempts to find the account from the collection of all accounts in
+        /// the game. If unsuccessful, will create a new account and return it.
+        /// </summary>
+        /// <param name="name">
+        ///     Name of the player account to find / create.
+        /// </param>
+        /// <returns>
+        /// If able to find an account with that name, will return that
+        /// account. Otherwise, will create a new account with the given name
+        /// and return it.
+        /// </returns>
         public static Account GetAccount(string name)
         {
-            foreach(Account a in accounts)
+            // attempt to find the account
+            foreach(Account account in _accounts)
             {
-                if (a.name == name)
+                // return matching account
+                if (account.Name == name)
                 {
-                    return a;
+                    return account;
                 }
             }
-            Account na = new Account(name);
-            accounts.Add(na);
-            return na;
+
+            // no account found, create a new account + return it
+            Account newAccount = new Account(name);
+            _accounts.Add(newAccount);
+            return newAccount;
         }
 
+        /// <summary>
+        /// Gets the current player account's top score for the given level, or
+        /// null if the player has not yet completed it.
+        /// </summary>
+        /// <param name="lvl">Level to get the score for.</param>
+        /// <returns>
+        /// If the player has completed the level before, it will return their
+        /// best score. Otherwise, will return <c>null</c>.
+        /// </returns>
+        public Score? GetScore(LevelNumber lvl)
+        {
+            // defaults to no best score
+            Score? bestscore = null;
+
+            // search all scores in the current player account
+            foreach(Score score in Scores)
+            {
+                if (
+                        (score.level == lvl) // if the required level
+                        && (
+                            (bestscore == null) // first score
+                            || (score.score > bestscore.score) // new best
+                        )
+                )
+                {
+                    bestscore = score;
+                }
+            }
+
+            // return the best score or null if none found
+            return bestscore;
+        }
+
+        /// <summary>
+        /// Gets the top <c>num_max</c> scores for the specified level.
+        /// </summary>
+        /// <param name="lvl">Level number to get the scores for.</param>
+        /// <param name="num_max">
+        ///     Number of scores to retrieve. Defaults to 3.
+        /// </param>
+        /// <returns>
+        /// List containing the best scores for the specified level. The length
+        /// of this list will be equal to or less than <c>num_max</c>.
+        /// </returns>
         public static List<Score> GetScores(LevelNumber lvl, int num_max = 3)
         {
-            /// <summary>
-            /// Get the top <num_max> scores for a particular level
-            /// </summary>
-            
+            // initialize collections of scores
+            List<Score> scores_all = new List<Score>(); // all relevant scores
+            List<Score> scores_sort = new List<Score>(); // sorted scores
+            List<Score> scores_slice = new List<Score>(); // top sorted scores
+
             // get all scores for that particular level
-            List<Score> scores = new List<Score>();
-            foreach (Account a in accounts)
+            foreach (Account account in _accounts)
             {
-                foreach (Score s in a.scores)
+                foreach (Score score in account.Scores)
                 {
-                    if (s.level == lvl) { scores.Add(s); }
+                    if (score.level == lvl)
+                    {
+                        scores_all.Add(score);
+                    }
                 }
             }
 
             // sort the scores in descending order based on score
-            List<Score> scores_sorted = scores.OrderBy(s1 => -1 * s1.score).ToList();
+            scores_sort = scores_all.OrderBy(s1 => -1 * s1.score).ToList();
 
-            List<Score> scores_sorted_slice = new List<Score>();
+            // get only the top scores
             for (int i = 0; i < num_max; i++)
             {
-                if (i < scores_sorted.Count) { scores_sorted_slice.Add(scores_sorted[i]); }
-                else { break; }
+                // if there are less scores than required, stop adding more
+                // scores
+                if (i < scores_sort.Count)
+                {
+                    scores_slice.Add(scores_sort[i]);
+                }
+                else {
+                    break;
+                }
             }
-            return scores_sorted_slice;
+
+            // return the top scores for that level
+            return scores_slice;
         }
 
-        public Score? GetScore(LevelNumber lvl)
-        {
-            /// <summary>
-            /// Tries to get the high score for the given level for the current accoount
-            /// </summary>
-
-            Score? bestscore = null;
-            foreach(Score s in scores)
-            {
-                if (
-                        (s.level == lvl)
-                        && (
-                            (bestscore == null)
-                            || (s.score > bestscore.score)
-                        )
-                ) { bestscore = s; }
-            }
-            return bestscore;
-        }
-
+        /// <summary>
+        /// Read the file with the provided name, and re-create all of the
+        /// accounts and scores associated with each.
+        /// </summary>
+        /// <param name="filename">Name of the file to read from.</param>
         public static void ReadData(string filename)
         {
+            // initialize file document
             XDocument? doc;
+
+            // attempt to read file data
             try
             {
                 doc = XDocument.Load(filename);
             }
-            catch {
+            catch
+            {
+                // error will occur if the file could not be found, or contains
+                // invalid data -> don't attempt to parse the data
                 return;
             }
 
-            if (doc == null) { return; }
-            var accounts = doc.Element("Accounts")?.Elements("Account");
-            if (accounts == null) {
+            // if file data could not be read, return early
+            if (doc == null)
+            {
                 return;
             }
+
+            // read the list of accounts from the xml file
+            var accounts = doc.Element("Accounts")?.Elements("Account");
+
+            // if no accounts were found in the file, return early
+            if (accounts == null)
+            {
+                return;
+            }
+
+            // re-create all accounts and scores from the xml file
             foreach (XElement account in accounts)
             {
                 // get the name of the account
                 string name = account.Element("Name")?.Value;
-                Account a = Account.GetAccount(name);
-                // Console.WriteLine($"Account {a} - name = {a.name}");
 
+                // create a new account with the specified name
+                Account newAccount = Account.GetAccount(name);
+
+                // get the scores for the account from the xml file
                 var scores = account.Element("Scores")?.Elements("Score");
-                if (scores != null)
+
+                // if no scores were found, skip to the next account
+                if (scores == null)
                 {
-                    foreach (var score in scores)
-                    {
-                        // Console.WriteLine($"Score {score}");
-                        a.AddScore(
-                            (LevelNumber) Convert.ToInt32(score.Attribute("Level")?.Value),
-                            Convert.ToInt32(score.Attribute("Score")?.Value),
-                            DateTime.Parse(score.Attribute("DateTime")?.Value)
-                        );
-                    }
+                    continue;
+                }
+
+                // re-create all scores for the account
+                foreach (var score in scores)
+                {
+                    // get the level, score, and date/time from the xml file
+                    string level = score.Attribute("Level")?.Value;
+                    string scoreVal = score.Attribute("Score")?.Value;
+                    string dateTime = score.Attribute("DateTime")?.Value;
+
+                    // create a new score with the specified level, score, and
+                    // date/time data
+                    newAccount.AddScore(
+                        (LevelNumber) Convert.ToInt32(level),
+                        Convert.ToInt32(scoreVal),
+                        DateTime.Parse(dateTime)
+                    );
                 }
             }
-            // // Console.WriteLine("read data");
-            // foreach (Account _a in Account.accounts)
-            // {
-            //     // Console.WriteLine($"Account: {_a.name}");
-            //     foreach (Score s in _a.scores)
-            //     {
-            //         // Console.WriteLine($"| - Score: {s.level} -> {s.score} ({s.datetime})");
-            //     }
-            // }
         }
 
-        public static void SaveData(List<Account> accounts, string filename)
+        /// <summary>
+        /// Saves the data of all accounts to the specified save file.
+        /// </summary>
+        /// <param name="filename">Name of the file to save to.</param>
+        public static void SaveData(string filename)
         {
             // save the player accounts to a file
             XDocument doc = new XDocument(
+                // create the root element
                 new XElement("Accounts",
-                    accounts.Select(a =>
+                    // create a new account element for each player account
+                    _accounts.Select(a =>
                         new XElement("Account",
-                            new XElement("Name", a.name),
+                            // save the player account name
+                            new XElement("Name", a.Name),
+
+                            // save the scores for the player account, if any
                             new XElement("Scores",
-                                a.scores.Select(s =>
+                                a.Scores.Select(s =>
+                                    // create a new score element for each
+                                    // score in the player account
                                     new XElement("Score",
+                                        // save the level the score is for
                                         new XAttribute("Level", (int)s.level),
+                                        // save the score achieved
                                         new XAttribute("Score", s.score),
+                                        // save the date/time the score was
+                                        // achieved
                                         new XAttribute("DateTime", s.datetime)
                                     )
                                 )
@@ -235,6 +361,9 @@ namespace _7_3_CustomProgramCode
                     )
                 )
             );
+
+            // overwrite the current document (if it exists) with the new save
+            // data
             doc.Save(filename);
         }
     }
@@ -1538,7 +1667,7 @@ namespace _7_3_CustomProgramCode
 
             // Close game window
             w.Close();
-            Account.SaveData(Account.accounts, filename);
+            Account.SaveData(filename);
         }
 
         public static Account? ScreenLogin(Window w)
@@ -1584,7 +1713,7 @@ namespace _7_3_CustomProgramCode
             UIButton b_scores = new UIButton(UIButtonType.Highscores, 750, 420, w);
             UIButton b_settings = new UIButton(UIButtonType.Instructions, 450, 520, w);
             UIButton b_logout = new UIButton(UIButtonType.Logout, 750, 520, w);
-            UIText t_welcome = new UIText($"Welcome {a.name} to My Platformer Game", 600, 150, 400, 60, w);
+            UIText t_welcome = new UIText($"Welcome {a.Name} to My Platformer Game", 600, 150, 400, 60, w);
 
             List<UIBase> ui = new List<UIBase>(){b_play, b_scores, b_settings, b_logout, t_welcome};
 
