@@ -187,14 +187,14 @@ namespace _7_3_CustomProgramCode
                 // get the name of the account
                 string name = account.Element("Name")?.Value;
                 Account a = Account.GetAccount(name);
-                Console.WriteLine($"Account {a} - name = {a.name}");
+                // Console.WriteLine($"Account {a} - name = {a.name}");
 
                 var scores = account.Element("Scores")?.Elements("Score");
                 if (scores != null)
                 {
                     foreach (var score in scores)
                     {
-                        Console.WriteLine($"Score {score}");
+                        // Console.WriteLine($"Score {score}");
                         a.AddScore(
                             (LevelNumber) Convert.ToInt32(score.Attribute("Level")?.Value),
                             Convert.ToInt32(score.Attribute("Score")?.Value),
@@ -203,15 +203,15 @@ namespace _7_3_CustomProgramCode
                     }
                 }
             }
-            Console.WriteLine("read data");
-            foreach (Account _a in Account.accounts)
-            {
-                Console.WriteLine($"Account: {_a.name}");
-                foreach (Score s in _a.scores)
-                {
-                    Console.WriteLine($"| - Score: {s.level} -> {s.score} ({s.datetime})");
-                }
-            }
+            // // Console.WriteLine("read data");
+            // foreach (Account _a in Account.accounts)
+            // {
+            //     // Console.WriteLine($"Account: {_a.name}");
+            //     foreach (Score s in _a.scores)
+            //     {
+            //         // Console.WriteLine($"| - Score: {s.level} -> {s.score} ({s.datetime})");
+            //     }
+            // }
         }
 
         public static void SaveData(List<Account> accounts, string filename)
@@ -1317,7 +1317,7 @@ namespace _7_3_CustomProgramCode
                 {
                     case Screen.Login:
                         a = ScreenLogin(w);
-                        Console.WriteLine($"{Account.accounts}");
+                        // Console.WriteLine($"{Account.accounts}");
                         if (a != null) { s = Screen.Main; }
                         else { s = Screen.Quit; }
                         break;
