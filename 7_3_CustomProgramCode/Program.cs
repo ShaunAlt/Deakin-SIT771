@@ -1453,9 +1453,9 @@ namespace _7_3_CustomProgramCode
         {
             // create screen ui elements
             UITextBox t1 = new UITextBox("Enter Name", 600, 300, 200, 40, w);
-            UIButton b1 = new UIButton("Login", 600, 400, 200, 60, w);
-            UIButton b2 = new UIButton("Exit", 600, 500, 200, 60, w);
-            List<UIBase> ui = new List<UIBase>(){t1, b1, b2};
+            UIButton b_login = new UIButton("Login", 600, 400, 200, 60, w);
+            UIButton b_exit = new UIButton("Exit", 600, 500, 200, 60, w);
+            List<UIBase> ui = new List<UIBase>(){t1, b_login, b_exit};
 
             // loop while window is open
             while (!w.CloseRequested)
@@ -1472,11 +1472,11 @@ namespace _7_3_CustomProgramCode
                 }
 
                 // process button click
-                if (b1.Clicked() || t1.submitted) {
+                if (b_login.Clicked() || t1.submitted) {
                     if (string.IsNullOrEmpty(t1.data)) { t1.Reset(); }
                     else { return Account.GetAccount(t1.data); }
                 }
-                if (b2.Clicked()) { return null; }
+                if (b_exit.Clicked()) { return null; }
 
                 // refresh window
                 w.Refresh();
@@ -1490,7 +1490,7 @@ namespace _7_3_CustomProgramCode
             // create screen ui elements
             UIButton b_play = new UIButton("Play", 450, 420, 200, 60, w);
             UIButton b_scores = new UIButton("Highscores", 750, 420, 200, 60, w);
-            UIButton b_settings = new UIButton("Settings", 450, 520, 200, 60, w);
+            UIButton b_settings = new UIButton("Instructions", 450, 520, 200, 60, w);
             UIButton b_logout = new UIButton("Logout", 750, 520, 200, 60, w);
             UIText t_welcome = new UIText($"Welcome {a.name} to My Platformer Game", 600, 150, 400, 60, w);
 
