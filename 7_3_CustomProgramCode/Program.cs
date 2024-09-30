@@ -48,10 +48,6 @@ namespace _7_3_CustomProgramCode
         ) : base(message, inner) { }
     }
 
-    /* ************************************************************************
-     * Game Account
-     * ***********************************************************************/
-    
     /// <summary>
     /// Represents a single player account in the game.
     /// </summary>
@@ -75,6 +71,7 @@ namespace _7_3_CustomProgramCode
     ///     <item>SaveData(filename) : <c>void</c></item>
     /// </list>
     /// </remarks>
+    /// <see cref="Score"/>
     public class Account
     {
         /// <summary>
