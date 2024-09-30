@@ -1453,8 +1453,8 @@ namespace _7_3_CustomProgramCode
         {
             // create screen ui elements
             UITextBox t1 = new UITextBox("Enter Name", 600, 300, 200, 40, w);
-            UIButton b_login = new UIButton("Login", 600, 400, 200, 60, w);
-            UIButton b_exit = new UIButton("Exit", 600, 500, 200, 60, w);
+            UIButton b_login = new UIButton(UIButtonType.Login, 600, 400, w);
+            UIButton b_exit = new UIButton(UIButtonType.Exit, 600, 500, w);
             List<UIBase> ui = new List<UIBase>(){t1, b_login, b_exit};
 
             // loop while window is open
@@ -1488,10 +1488,10 @@ namespace _7_3_CustomProgramCode
         public static Screen ScreenMain(Account a, Window w)
         {
             // create screen ui elements
-            UIButton b_play = new UIButton("Play", 450, 420, 200, 60, w);
-            UIButton b_scores = new UIButton("Highscores", 750, 420, 200, 60, w);
-            UIButton b_settings = new UIButton("Instructions", 450, 520, 200, 60, w);
-            UIButton b_logout = new UIButton("Logout", 750, 520, 200, 60, w);
+            UIButton b_play = new UIButton(UIButtonType.Play, 450, 420, w);
+            UIButton b_scores = new UIButton(UIButtonType.Highscores, 750, 420, w);
+            UIButton b_settings = new UIButton(UIButtonType.Instructions, 450, 520, w);
+            UIButton b_logout = new UIButton(UIButtonType.Logout, 750, 520, w);
             UIText t_welcome = new UIText($"Welcome {a.name} to My Platformer Game", 600, 150, 400, 60, w);
 
             List<UIBase> ui = new List<UIBase>(){b_play, b_scores, b_settings, b_logout, t_welcome};
@@ -1525,17 +1525,17 @@ namespace _7_3_CustomProgramCode
         public static Screen ScreenPlayMenu(Account a, Window w)
         {
             // create back button
-            UIButton b_back = new UIButton("Back", 600, 750, 200, 60, w);
-            UIButton b_lvl0 = new UIButton("Play Level 1", 120, 175, 200, 60, w);
-            UIButton b_lvl1 = new UIButton("Play Level 2", 360, 175, 200, 60, w);
-            UIButton b_lvl2 = new UIButton("Play Level 3", 600, 175, 200, 60, w);
-            UIButton b_lvl3 = new UIButton("Play Level 4", 840, 175, 200, 60, w);
-            UIButton b_lvl4 = new UIButton("Play Level 5", 1080, 175, 200, 60, w);
-            UIButton b_lvl5 = new UIButton("Play Level 6", 120, 525, 200, 60, w);
-            UIButton b_lvl6 = new UIButton("Play Level 7", 360, 525, 200, 60, w);
-            UIButton b_lvl7 = new UIButton("Play Level 8", 600, 525, 200, 60, w);
-            UIButton b_lvl8 = new UIButton("Play Level 9", 840, 525, 200, 60, w);
-            UIButton b_lvl9 = new UIButton("Play Level 10", 1080, 525, 200, 60, w);
+            UIButton b_back = new UIButton(UIButtonType.Back, 600, 750, w);
+            UIButton b_lvl0 = new UIButton(UIButtonType.Level1, 120, 175, w);
+            UIButton b_lvl1 = new UIButton(UIButtonType.Level2, 360, 175, w);
+            UIButton b_lvl2 = new UIButton(UIButtonType.Level3, 600, 175, w);
+            UIButton b_lvl3 = new UIButton(UIButtonType.Level4, 840, 175, w);
+            UIButton b_lvl4 = new UIButton(UIButtonType.Level5, 1080, 175, w);
+            UIButton b_lvl5 = new UIButton(UIButtonType.Level6, 120, 525, w);
+            UIButton b_lvl6 = new UIButton(UIButtonType.Level7, 360, 525, w);
+            UIButton b_lvl7 = new UIButton(UIButtonType.Level8, 600, 525, w);
+            UIButton b_lvl8 = new UIButton(UIButtonType.Level9, 840, 525, w);
+            UIButton b_lvl9 = new UIButton(UIButtonType.Level10, 1080, 525, w);
             List<UIBase> ui = new List<UIBase>(){
                 b_back,
                 b_lvl0,
@@ -1607,7 +1607,7 @@ namespace _7_3_CustomProgramCode
         public static Screen ScreenScores(Account a, Window w)
         {
             // create back button
-            UIButton b_back = new UIButton("Back", 600, 750, 200, 60, w);
+            UIButton b_back = new UIButton(UIButtonType.Back, 600, 750, w);
             List<UIBase> ui = new List<UIBase>(){b_back};
 
             // create screen ui text elements
@@ -1661,7 +1661,7 @@ namespace _7_3_CustomProgramCode
         public static Screen ScreenSettings(Window w)
         {
             // create back button
-            UIButton b_back = new UIButton("Back", 600, 750, 200, 60, w);
+            UIButton b_back = new UIButton(UIButtonType.Back, 600, 750, w);
             List<UIBase> ui = new List<UIBase>(){b_back};
 
             // create screen ui text elements
@@ -1894,6 +1894,25 @@ namespace _7_3_CustomProgramCode
         }
     }
 
+    public enum UIButtonType {
+        Back,
+        Exit,
+        Highscores,
+        Instructions,
+        Level1,
+        Level2,
+        Level3,
+        Level4,
+        Level5,
+        Level6,
+        Level7,
+        Level8,
+        Level9,
+        Level10,
+        Login,
+        Logout,
+        Play,
+    }
     /* ************************************************************************
      * UI Button
      * ***********************************************************************/
@@ -1929,58 +1948,88 @@ namespace _7_3_CustomProgramCode
 
         // *********
         // Constants
-        private SplashKitSDK.Color COL_HOVER_BORDER = SplashKit.RGBColor(55, 72, 99);
-        private SplashKitSDK.Color COL_HOVER_FILL = SplashKit.RGBColor(153, 153, 153);
-        private SplashKitSDK.Color COL_NORMAL_BORDER = SplashKit.RGBColor(102, 102, 102);
-        private SplashKitSDK.Color COL_NORMAL_FILL = SplashKit.RGBColor(204, 204, 204);
-        private SplashKitSDK.Color COL_TEXT = SplashKit.RGBColor(255, 255, 255);
-
+        private SplashKitSDK.Bitmap _dark; // dark image
+        private SplashKitSDK.Bitmap _light; // light image
         // ***********
         // Constructor
         public UIButton(
-                string label,
+                UIButtonType type_,
                 double x,
                 double y,
-                double width,
-                double height,
                 SplashKitSDK.Window window
-        ) : base(label, x, y, width, height, window)
-        { }
+        ) : base("Button Label", x, y, 200, 60, window)
+        {
+            string _dir = GetBitmapDirectory(type_);
+            _dark = new SplashKitSDK.Bitmap($"{(int)type_}_dark", $"{_dir}/dark.png");
+            _light = new SplashKitSDK.Bitmap($"{(int)type_}_light", $"{_dir}/light.png");
+        }
+
+        private string GetBitmapDirectory(UIButtonType type_)
+        {
+            switch (type_)
+            {
+                case UIButtonType.Back:
+                    return "Resources/images/Buttons/Back";
+                case UIButtonType.Exit:
+                    return "Resources/images/Buttons/Exit";
+                case UIButtonType.Highscores:
+                    return "Resources/images/Buttons/Highscores";
+                case UIButtonType.Instructions:
+                    return "Resources/images/Buttons/Instructions";
+                case UIButtonType.Level1:
+                    return "Resources/images/Buttons/Level/1";
+                case UIButtonType.Level2:
+                    return "Resources/images/Buttons/Level/2";
+                case UIButtonType.Level3:
+                    return "Resources/images/Buttons/Level/3";
+                case UIButtonType.Level4:
+                    return "Resources/images/Buttons/Level/4";
+                case UIButtonType.Level5:
+                    return "Resources/images/Buttons/Level/5";
+                case UIButtonType.Level6:
+                    return "Resources/images/Buttons/Level/6";
+                case UIButtonType.Level7:
+                    return "Resources/images/Buttons/Level/7";
+                case UIButtonType.Level8:
+                    return "Resources/images/Buttons/Level/8";
+                case UIButtonType.Level9:
+                    return "Resources/images/Buttons/Level/9";
+                case UIButtonType.Level10:
+                    return "Resources/images/Buttons/Level/10";
+                case UIButtonType.Login:
+                    return "Resources/images/Buttons/Login";
+                case UIButtonType.Logout:
+                    return "Resources/images/Buttons/Logout";
+                case UIButtonType.Play:
+                    return "Resources/images/Buttons/Play";
+                default:
+                    return "";
+            }
+        }
 
         // ***************
         // Draw UI Element
         public override void Draw()
         {
-            // local function used for draw fill + border of the button
-            void DrawRectangle(
-                    SplashKitSDK.Color fill,
-                    SplashKitSDK.Color border
-            )
-            {
-                SplashKit.FillRectangleOnWindow(_window, fill, _rect);
-                SplashKit.DrawRectangleOnWindow(_window, border, _rect);
-            }
-
             // draw button fill + border
             if (MouseOver())
             {
-                DrawRectangle(COL_HOVER_FILL, COL_HOVER_BORDER);
+                SplashKit.DrawBitmapOnWindow(
+                    _window,
+                    _dark,
+                    _rect.X,
+                    _rect.Y
+                );
             }
             else
             {
-                DrawRectangle(COL_NORMAL_FILL, COL_NORMAL_BORDER);
+                SplashKit.DrawBitmapOnWindow(
+                    _window,
+                    _light,
+                    _rect.X,
+                    _rect.Y
+                );
             }
-
-            // draw the button text
-            SplashKit.DrawTextOnWindow(
-                _window,
-                _label,
-                COL_TEXT,
-                "Arial",
-                20,
-                pos.X - (_label.Length * 4),
-                pos.Y - 7
-            );
         }
     }
 
