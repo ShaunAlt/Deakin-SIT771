@@ -1033,7 +1033,8 @@ namespace _7_3_CustomProgramCode
                 }
 
                 // draw sprites
-                l.player.Draw();
+                // l.player.Draw();
+                l.player.DrawPlayer(vel.X, vel.Y);
                 foreach (Sprite s in l.GetNPCS()) { s.Draw(); }
 
                 // if reached target - return score
@@ -1201,18 +1202,38 @@ namespace _7_3_CustomProgramCode
                 Height = _bitmap.Height
             };
         }}
+        private List<Bitmap> _bmps;
+        private int _anim_counter;
+        private int _anim_counter_frames;
+        private bool _anim_counter_inc;
         public Player(
             float x,
             float y,
             Window window
         ) : base(x, y, "Resources/images/Player.png", window)
         {
+            _anim_counter = 0;
+            _anim_counter_inc = true;
+            _anim_counter_frames = 0;
+            _bmps = new List<Bitmap>()
+            {
+                new Bitmap("Player_l0", "Resources/images/Player v2/l0.png"),
+                new Bitmap("Player_l1", "Resources/images/Player v2/l1.png"),
+                new Bitmap("Player_l2", "Resources/images/Player v2/l2.png"),
+                new Bitmap("Player_r0", "Resources/images/Player v2/r0.png"),
+                new Bitmap("Player_r1", "Resources/images/Player v2/r1.png"),
+                new Bitmap("Player_r2", "Resources/images/Player v2/r2.png"),
+            };
         }
         public bool CheckCollision(Platform other)
         {
             // return collision_rect.IntersectsWith(other.collision_rect);
             return SplashKit.BitmapRectangleCollision(
-                _bitmap,
+                _bmps[2],
+                _pos,
+                other.collision_rect
+            ) || SplashKit.BitmapRectangleCollision(
+                _bmps[0],
                 _pos,
                 other.collision_rect
             );
@@ -1220,11 +1241,82 @@ namespace _7_3_CustomProgramCode
         public bool CheckCollision(Goal other)
         {
             return SplashKit.BitmapCollision(
-                _bitmap,
+                _bmps[2],
+                _pos,
+                other.bitmap,
+                other.pos
+            ) || SplashKit.BitmapCollision(
+                _bmps[0],
                 _pos,
                 other.bitmap,
                 other.pos
             );
+        }
+        public void DrawPlayer(
+                double vel_x,
+                double vel_y
+        )
+        {
+            // update number of frames the current player animation has played
+            //  for
+            _anim_counter_frames++;
+
+            if (vel_y > 0) // jumping up - use l0 or r0
+            {
+                _anim_counter = 2;
+                _anim_counter_inc = true;
+                _anim_counter_frames = 0;
+            }
+            else if (vel_y < 0) // falling down - use l2 or r2
+            {
+                _anim_counter = 0;
+                _anim_counter_inc = false;
+                _anim_counter_frames = 0;
+            }
+
+            // draw based on direction
+            if (vel_x >= 0) // stationary or right
+            {
+                SplashKit.DrawBitmapOnWindow(
+                    _window,
+                    _bmps[_anim_counter],
+                    _pos.X,
+                    _pos.Y
+                );
+            }
+            else // left
+            {
+                SplashKit.DrawBitmapOnWindow(
+                    _window,
+                    _bmps[_anim_counter + 3],
+                    _pos.X,
+                    _pos.Y
+                );
+            }
+
+            // update animation counter
+            if (_anim_counter_frames > 5 && Math.Abs(vel_x) > 0.25)
+            {
+                _anim_counter_frames = 0;
+                if (_anim_counter_inc)
+                {
+                    _anim_counter++;
+                    if (_anim_counter >= 2)
+                    {
+                        _anim_counter_inc = false;
+                        _anim_counter = 2;
+                    }
+                }
+                else
+                {
+                    _anim_counter--;
+                    if (_anim_counter <= 0)
+                    {
+                        _anim_counter_inc = true;
+                        _anim_counter = 0;
+                    }
+                }
+            }
         }
     }
 
