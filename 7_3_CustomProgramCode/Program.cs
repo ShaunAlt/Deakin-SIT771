@@ -54,21 +54,23 @@ namespace _7_3_CustomProgramCode
     /// <remarks>
     /// Fields + Properties
     /// <list type="bullet">
-    ///     <item>_accounts : <c>List &lt; Account &gt; </c></item>
-    ///     <item>Name : <c>string</c></item>
-    ///     <item>Scores : <c>List &lt; Score &gt; </c></item>
+    ///     <item>- _accounts : <c>List &lt; Account &gt; </c></item>
+    ///     <item>+ Name : <c>string</c></item>
+    ///     <item>+ Scores : <c>List &lt; Score &gt; </c></item>
     /// </list>
     /// 
     /// Methods
     /// <list type="bullet">
-    ///     <item>Account(name) : <c>Account</c></item>
-    ///     <item>AddScore(lvl, score) : <c>void</c></item>
-    ///     <item>AddScore(lvl, score, datetime) : <c>void</c></item>
-    ///     <item>GetAccount(name) : <c>Account</c></item>
-    ///     <item>GetScore(lvl) : <c>Score | null</c></item>
-    ///     <item>GetScores(lvl, num_max) : <c> List &lt; Score &gt;</c></item>
-    ///     <item>ReadData(filename) : <c>void</c></item>
-    ///     <item>SaveData(filename) : <c>void</c></item>
+    ///     <item>+ Account(name) : <c>Account</c></item>
+    ///     <item>+ AddScore(lvl, score) : <c>void</c></item>
+    ///     <item>+ AddScore(lvl, score, datetime) : <c>void</c></item>
+    ///     <item>+ GetAccount(name) : <c>Account</c></item>
+    ///     <item>+ GetScore(lvl) : <c>Score | null</c></item>
+    ///     <item>
+    ///         + GetScores(lvl, num_max) : <c> List &lt; Score &gt;</c>
+    ///     </item>
+    ///     <item>+ ReadData(filename) : <c>void</c></item>
+    ///     <item>+ SaveData(filename) : <c>void</c></item>
     /// </list>
     /// </remarks>
     /// <see cref="Score"/>
@@ -365,28 +367,140 @@ namespace _7_3_CustomProgramCode
         }
     }
 
-    /* ************************************************************************
-     * Individual Level Class
-     * ***********************************************************************/
+    /// <summary>
+    /// Represents an individual level that can be played in the game.
+    /// </summary>
+    /// <remarks>
+    /// Fields + Properties
+    /// <list type="bullet">
+    ///     <item>- _goal : <c>Goal</c></item>
+    ///     <item>- _platforms : <c>List &lt; Platform &gt; </c></item>
+    ///     <item>- _player : <c>Player</c></item>
+    ///     <item>- _txts : <c>List &lt; SpriteText &gt; </c></item>
+    ///     <item>- _window : <c>SplashKitSDK.Window</c></item>
+    /// </list>
+    /// 
+    /// Methods
+    /// <list type="bullet">
+    ///     <item>- Draw(score, vel) : <c>void</c></item>
+    ///     <item>- GetNonPlayerSprites() : <c>List &lt; Sprite &gt; </c></item>
+    ///     <item>+ Level(lvl, w) : <c>Level</c></item>
+    ///     <item>+ Play() : <c>int</c></item>
+    ///     <item>- UpdateX(vel) : <c>double</c></item>
+    ///     <item>- UpdateY(vel) : <c>double</c></item>
+    /// </list>
+    /// </remarks>
+    /// <see cref="Goal"/>
+    /// <see cref="LevelNumber"/>
+    /// <see cref="Platform"/>
+    /// <see cref="Player"/>
+    /// <see cref="Sprite"/>
+    /// <see cref="SpriteText"/>
     public class Level
     {
-        public List<Platform> platforms;
-        public Player player;
-        public Goal goal;
-        public List<SpriteText> txts;
+        /// <summary>
+        /// Collection of platforms that are used to create the current level.
+        /// </summary>
+        private List<Platform> _platforms;
 
-        public Level(LevelNumber lvl, Window w)
+        /// <summary>
+        /// Player sprite that is used to move around the current level.
+        /// </summary>
+        private Player _player;
+
+        /// <summary>
+        /// Goal sprite that is the target for the current level.
+        /// </summary>
+        private Goal _goal;
+
+        /// <summary>
+        /// Collection of text elements that should be displayed in the current
+        /// level.
+        /// </summary>
+        private List<SpriteText> _txts;
+        
+        /// <summary>
+        /// Window used to display the current level.
+        /// </summary>
+        private SplashKitSDK.Window _window;
+
+        /// <summary>
+        /// Draws all sprites + score text for the current level on the game
+        /// window.
+        /// </summary>
+        /// <param name="score">Score to display.</param>
+        /// <param name="vel">Current player sprite velocity.</param>
+        private void Draw(int score, SplashKitSDK.Vector2D vel)
         {
-            // create the sprites for the level based on the level number
-            player = new Player(600, 400, w);
+            // clear window
+            _window.Clear(SplashKitSDK.Color.White);
+
+            // draw the player
+            _player.DrawPlayer(vel.X, vel.Y);
+
+            // draw the non-player sprites
+            foreach (Sprite sprite in GetNonPlayerSprites())
+            {
+                sprite.Draw();
+            }
+
+            // draw score text
+            SplashKit.DrawTextOnWindow(
+                _window,
+                $"Current Score: {score}",
+                SplashKitSDK.Color.Black,
+                50,
+                50
+            );
+        }
+
+        /// <summary>
+        /// Gets a collection of all platforms, text elements, and the goal in
+        /// the current level (all sprites except for the player).
+        /// </summary>
+        /// <returns>
+        /// Collection of all platforms, text elements, and the goal in the
+        /// current level (all sprites except for the player).
+        /// </returns>
+        private List<Sprite> GetNonPlayerSprites()
+        {
+            // initialize sprites list
+            List<Sprite> sprites = new List<Sprite>();
+
+            // add all platforms
+            foreach (Platform p in _platforms) { sprites.Add(p); }
+
+            // add all text elements
+            foreach (SpriteText t in _txts) { sprites.Add(t); }
+
+            // add goal
+            sprites.Add(_goal);
+
+            // return sprites list
+            return sprites;
+        }
+
+        /// <summary>
+        /// Creates a new game level that the player is able to play.
+        /// </summary>
+        /// <param name="lvl">Number of the level to create.</param>
+        /// <param name="w">Game window to display the level on.</param>
+        public Level(LevelNumber lvl, SplashKitSDK.Window w)
+        {
+            // store window for the current level
+            _window = w;
+
+            // create the player
+            _player = new Player(600, 400, w);
+
+            // create the platform, goal, and text element sprites for the
+            // level based on the level number
             switch (lvl)
             {
-                case LevelNumber.L0:
-                    // basic platforms
-                    platforms = new List<Platform>(){
-                        new Platform(0, 100, PlatformType.Large90, w),
-                        new Platform(0, 300, PlatformType.Large90, w),
-                        new Platform(0, 500, PlatformType.Large90, w),
+                case LevelNumber.L0: // basic platforms
+                    // create platforms
+                    _platforms = new List<Platform>(){
+                        // floor
                         new Platform(0, 700, PlatformType.Large, w),
                         new Platform(200, 700, PlatformType.Large, w),
                         new Platform(400, 700, PlatformType.Large, w),
@@ -403,29 +517,45 @@ namespace _7_3_CustomProgramCode
                         new Platform(2600, 700, PlatformType.Large, w),
                         new Platform(2800, 700, PlatformType.Large, w),
                         new Platform(3000, 700, PlatformType.Large, w),
+                        // left wall
+                        new Platform(0, 100, PlatformType.Large90, w),
+                        new Platform(0, 300, PlatformType.Large90, w),
+                        new Platform(0, 500, PlatformType.Large90, w),
+                        // right wall
                         new Platform(3195, 500, PlatformType.Large90, w),
                         new Platform(3195, 300, PlatformType.Large90, w),
                         new Platform(3195, 100, PlatformType.Large90, w),
                         new Platform(3195, -100, PlatformType.Large90, w),
                         new Platform(3195, -300, PlatformType.Large90, w),
                         new Platform(3195, -500, PlatformType.Large90, w),
+                        // platform 1
                         new Platform(600, 500, PlatformType.Large, w),
                         new Platform(800, 500, PlatformType.Large, w),
+                        // platform 2
                         new Platform(1200, 300, PlatformType.Large, w),
                         new Platform(1400, 300, PlatformType.Large, w),
+                        // platform 3
                         new Platform(1800, 100, PlatformType.Large, w),
                         new Platform(2000, 100, PlatformType.Large, w),
+                        // platform 4
                         new Platform(2400, -100, PlatformType.Large, w),
                         new Platform(2600, -100, PlatformType.Large, w),
                     };
-                    goal = new Goal(2600, -200, w);
-                    txts = new List<SpriteText>() {
-                        new SpriteText(600, 300, "Jump along the platforms to the goal", w),
+                    // create goal on platform 4
+                    _goal = new Goal(2600, -200, w);
+                    // create text elements
+                    _txts = new List<SpriteText>() {
+                        new SpriteText(
+                            600,
+                            300,
+                            "Jump along the platforms to the goal",
+                            w
+                        ),
                     };
                     break;
-                case LevelNumber.L1:
-                    // go down
-                    platforms = new List<Platform>(){
+                case LevelNumber.L1: // go down
+                    // create platforms
+                    _platforms = new List<Platform>(){
                         // left wall
                         new Platform(0, 0, PlatformType.Large90, w),
                         new Platform(0, 200, PlatformType.Large90, w),
@@ -543,14 +673,16 @@ namespace _7_3_CustomProgramCode
                         new Platform(800, 4000, PlatformType.Large, w),
                         new Platform(1000, 4000, PlatformType.Large, w),
                     };
-                    goal = new Goal(600, 3900, w);
-                    txts = new List<SpriteText>() {
+                    // create goal on floor
+                    _goal = new Goal(600, 3900, w);
+                    // create text elements
+                    _txts = new List<SpriteText>() {
                         new SpriteText(600, 300, "Go Down", w),
                     };
                     break;
-                case LevelNumber.L2:
-                    // spiral
-                    platforms = new List<Platform>(){
+                case LevelNumber.L2: // spiral
+                    // create platforms
+                    _platforms = new List<Platform>(){
                         // start
                         new Platform(500, 500, PlatformType.Large, w),
                         new Platform(500, 300, PlatformType.Large90, w),
@@ -560,7 +692,6 @@ namespace _7_3_CustomProgramCode
                         new Platform(895, 300, PlatformType.Large90, w),
                         new Platform(895, 100, PlatformType.Large90, w),
                         new Platform(700, 100, PlatformType.Large, w),
-                        // new Platform(850, 300, PlatformType.Small, w),
                         // flat 1
                         new Platform(500, 100, PlatformType.Large, w),
                         // drop 1
@@ -621,13 +752,16 @@ namespace _7_3_CustomProgramCode
                         new Platform(100, -300, PlatformType.Large, w),
                         new Platform(100, -300, PlatformType.Large90, w),
                     };
-                    goal = new Goal(200, -200, w);
-                    txts = new List<SpriteText>() {
+                    // create goal at end
+                    _goal = new Goal(200, -200, w);
+                    // create text elements
+                    _txts = new List<SpriteText>() {
                         new SpriteText(600, 300, "Get Out", w),
                     };
                     break;
-                case LevelNumber.L3:
-                    platforms = new List<Platform>(){
+                case LevelNumber.L3: // central wall
+                    // create platforms
+                    _platforms = new List<Platform>(){
                         // floor
                         new Platform(0, 500, PlatformType.Large, w),
                         new Platform(200, 500, PlatformType.Large, w),
@@ -677,14 +811,16 @@ namespace _7_3_CustomProgramCode
                         new Platform(1400, 300, PlatformType.Large, w),
                         new Platform(1600, 300, PlatformType.Large, w),
                     };
-                    goal = new Goal(1100, 400, w);
-                    txts = new List<SpriteText>() {
+                    // create goal at end of other side
+                    _goal = new Goal(1100, 400, w);
+                    // create text elements
+                    _txts = new List<SpriteText>() {
                         new SpriteText(600, 300, "Get Over", w),
                     };
                     break;
-                case LevelNumber.L4:
-                    // spiral pattern
-                    platforms = new List<Platform>(){
+                case LevelNumber.L4: // spiral platforms
+                    // create platforms
+                    _platforms = new List<Platform>(){
                         // floor
                         new Platform(0, 500, PlatformType.Large, w),
                         new Platform(200, 500, PlatformType.Large, w),
@@ -727,14 +863,16 @@ namespace _7_3_CustomProgramCode
                         new Platform(400, -1000, PlatformType.Small, w),
                         new Platform(100, -1000, PlatformType.Small, w),
                     };
-                    goal = new Goal(124, -1100, w);
-                    txts = new List<SpriteText>() {
+                    // create goal on last platform
+                    _goal = new Goal(124, -1100, w);
+                    // create text elements
+                    _txts = new List<SpriteText>() {
                         new SpriteText(600, 300, "Get Twisty", w),
                     };
                     break;
-                case LevelNumber.L5:
-                    // tiny rise/fall
-                    platforms = new List<Platform>(){
+                case LevelNumber.L5: // tiny rise/fall
+                    // create platforms
+                    _platforms = new List<Platform>(){
                         // floor
                         new Platform(0, 500, PlatformType.Large, w),
                         new Platform(200, 500, PlatformType.Large, w),
@@ -784,13 +922,16 @@ namespace _7_3_CustomProgramCode
                         new Platform(1700, -500, PlatformType.Tiny, w),
                         new Platform(1675, -250, PlatformType.Medium, w),
                     };
-                    goal = new Goal(1725, -350, w);
-                    txts = new List<SpriteText>() {
+                    // create goal on last platform
+                    _goal = new Goal(1725, -350, w);
+                    // create text elements
+                    _txts = new List<SpriteText>() {
                         new SpriteText(600, 300, "Get Vertical", w),
                     };
                     break;
-                case LevelNumber.L6:
-                    platforms = new List<Platform>(){
+                case LevelNumber.L6: // ultra tiny - 1
+                    // create platforms
+                    _platforms = new List<Platform>(){
                         // floor
                         new Platform(0, 500, PlatformType.Large, w),
                         new Platform(200, 500, PlatformType.Large, w),
@@ -821,14 +962,16 @@ namespace _7_3_CustomProgramCode
                         new Platform(1200, 0, PlatformType.Tiny90, w),
                         new Platform(1500, 0, PlatformType.Tiny90, w),
                     };
-                    goal = new Goal(1500, -100, w);
-                    txts = new List<SpriteText>() {
+                    // create goal on last platform
+                    _goal = new Goal(1500, -100, w);
+                    // create text elements
+                    _txts = new List<SpriteText>() {
                         new SpriteText(600, 300, "Get Tiny", w),
                     };
                     break;
-                case LevelNumber.L7:
-                    // staircase
-                    platforms = new List<Platform>(){
+                case LevelNumber.L7: // staircase
+                    // create platforms
+                    _platforms = new List<Platform>(){
                         // floor
                         new Platform(400, 500, PlatformType.Large, w),
                         new Platform(600, 500, PlatformType.Large, w),
@@ -898,14 +1041,16 @@ namespace _7_3_CustomProgramCode
                         new Platform(2200, 100, PlatformType.Large90, w),
                         new Platform(2000, 100, PlatformType.Large, w),
                     };
-                    goal = new Goal(2300, 400, w);
-                    txts = new List<SpriteText>() {
+                    // create goal under last staircase
+                    _goal = new Goal(2300, 400, w);
+                    // create text elements
+                    _txts = new List<SpriteText>() {
                         new SpriteText(600, 300, "Staircase", w),
                     };
                     break;
-                case LevelNumber.L8:
-                    // tiny sine wave
-                    platforms = new List<Platform>(){
+                case LevelNumber.L8: // sine wave
+                    // create platforms
+                    _platforms = new List<Platform>(){
                         // floor
                         new Platform(0, 500, PlatformType.Large, w),
                         new Platform(200, 500, PlatformType.Large, w),
@@ -962,14 +1107,16 @@ namespace _7_3_CustomProgramCode
                         new Platform(3600, -500, PlatformType.Tiny, w),
                         new Platform(3900, -250, PlatformType.Tiny, w),
                     };
-                    goal = new Goal(3900, -350, w);
-                    txts = new List<SpriteText>() {
+                    // create goal on last platform
+                    _goal = new Goal(3900, -350, w);
+                    // create text elements
+                    _txts = new List<SpriteText>() {
                         new SpriteText(600, 300, "Tiny Zig-Zag", w),
                     };
                     break;
-                case LevelNumber.L9:
-                    // ultra-tiny sine wave
-                    platforms = new List<Platform>(){
+                case LevelNumber.L9: // ultra-tiny sine wave
+                    // create platforms
+                    _platforms = new List<Platform>(){
                         // floor
                         new Platform(0, 500, PlatformType.Large, w),
                         new Platform(200, 500, PlatformType.Large, w),
@@ -1059,132 +1206,212 @@ namespace _7_3_CustomProgramCode
                         new Platform(7500, -250, PlatformType.Tiny90, w),
                         new Platform(7800, 0, PlatformType.Tiny90, w),
                     };
-                    goal = new Goal(7800, -100, w);
-                    txts = new List<SpriteText>() {
+                    // create goal on last platform
+                    _goal = new Goal(7800, -100, w);
+                    // create text elements
+                    _txts = new List<SpriteText>() {
                         new SpriteText(600, 300, "Ultra-Tiny Zig-Zag", w),
                     };
                     break;
-                default:
-                    throw new InvalidLevelNumberException($"Invalid level number {lvl}");
+                default: // unknown level number
+                    throw new InvalidLevelNumberException(
+                        $"Invalid level number {lvl}"
+                    );
             }
         }
 
-        public List<Sprite> GetNPCS()
+        /// <summary>
+        /// Plays the current level, and returns the score that the player
+        /// achieves.
+        /// </summary>
+        /// <returns>
+        /// If the player finishes the level, returns the score (positive
+        /// integer). If the player closed the screen, returns <c>-1</c>. If
+        /// the player hit the ESCAPE key, returns <c>-2</c>. If the player ran
+        /// out of time and the score became negative, returns <c>-3</c>.
+        /// </returns>
+        public int Play()
         {
-            List<Sprite> sprites = new List<Sprite>();
-            foreach (Platform p in platforms) { sprites.Add(p); }
-            foreach (SpriteText t in txts) { sprites.Add(t); }
-            sprites.Add(goal);
-            return sprites;
-        }
-
-        public static int PlayLevel(LevelNumber levelnum, Window w)
-        {
-            // play a particular level and return the score the player got
-            Level l = new Level(levelnum, w);
-
             // initialize score
             int score = 10000;
-            Vector2D vel = new Vector2D(){ X = 0, Y = 0 };
+
+            // initialize player velocity
+            SplashKitSDK.Vector2D vel = new Vector2D(){ X = 0, Y = 0 };
 
             // loop while window is open
-            while (!w.CloseRequested)
+            while (!_window.CloseRequested)
             {
-                // close if score <= 0
-                if (score <= 0) { return -3; }
-
-                // Process SplashKit Events
+                // process SplashKit events
                 SplashKit.ProcessEvents();
-                w.Clear(Color.White);
 
-                // escape key
+                // decrease the player's score
+                score--;
+
+                // close if score <= 0
+                if (score <= 0)
+                {
+                    return -3;
+                }
+
+                // close if escape key pressed
                 if (SplashKit.KeyDown(SplashKitSDK.KeyCode.EscapeKey))
                 {
                     return -2;
                 }
+                
+                // update horizontal velocity
+                vel.X = UpdateX(vel.X);
 
-                // update left / right
-                double acc_x = 0;
-                if (SplashKit.KeyDown(SplashKitSDK.KeyCode.RightKey)) {
-                    // right
-                    acc_x -= 0.35;
-                }
-                if (SplashKit.KeyDown(SplashKitSDK.KeyCode.LeftKey)) {
-                    // right
-                    acc_x += 0.35;
-                }
-                // vel.X = Math.Min(3, Math.Max(-3, vel.X + acc_x));
-                vel.X = vel.X + acc_x;
-                // friction
-                vel.X = vel.X * 0.95;
-                foreach (Sprite s in l.GetNPCS()) { s.Update(vel.X, 0); }
-                bool reverseX = false;
-                foreach (Platform p in l.platforms) {
-                    if (l.player.CheckCollision(p)) {
-                        reverseX = true;
-                        break;
-                    }
-                }
-                if (reverseX) {
-                    foreach (Sprite s in l.GetNPCS()) { s.Update(vel.X, 0, true); }
-                    vel.X = 0;
-                }
-
-                // update up/down
-                double acc_y = 0;
-                if (SplashKit.KeyDown(SplashKitSDK.KeyCode.UpKey)) {
-                    // jump
-                    if (vel.Y == 0) {
-                        acc_y = 15;
-                    }
-                }
-                // gravity
-                acc_y -= 0.251;
-                // update velocity from acceleration
-                // vel.Y = Math.Min(10, Math.Max(-10, vel.Y + acc_y));
-                vel.Y = (vel.Y + acc_y) * 0.99;
-                // update positions
-                foreach (Sprite s in l.GetNPCS()) { s.Update(0, vel.Y); }
-                // check collisions and teleport if required
-                bool reverseY = false;
-                foreach (Platform p in l.platforms) {
-                    if (l.player.CheckCollision(p)) {
-                        reverseY = true;
-                        break;
-                    }
-                }
-                if (reverseY) {
-                    foreach (Sprite s in l.GetNPCS()) { s.Update(0, vel.Y, true); }
-                    vel.Y = 0;
-                }
-
-                // draw sprites
-                // l.player.Draw();
-                l.player.DrawPlayer(vel.X, vel.Y);
-                foreach (Sprite s in l.GetNPCS()) { s.Draw(); }
+                // update vertical velocity
+                vel.Y = UpdateY(vel.Y);
 
                 // if reached target - return score
-                if (l.player.CheckCollision(l.goal)) { return score; }
+                if (_player.CheckCollision(_goal))
+                {
+                    return score;
+                }
 
-                score--; // decrease score based on time
+                // draw level
+                Draw(score, vel);
 
-                // draw text
-                string score_string = $"Current Score: {score}";
-                SplashKit.DrawTextOnWindow(
-                    w,
-                    score_string,
-                    Color.Black,
-                    "Arial",
-                    20,
-                    50,
-                    50
-                );
-
-                w.Refresh(60);
+                // update screen at 60fps
+                _window.Refresh(60);
             }
 
             // window was closed - return invalid score
             return -1;
+        }
+
+        /// <summary>
+        /// Updates the horizontal positions of all sprites in the window
+        /// based on the keys pressed and sprite collisions.
+        /// </summary>
+        /// <returns>
+        /// Returns the horizontal velocity of all sprites in the window.
+        /// Negative values indicate that the player is moving right (all other
+        /// sprites a moving left).
+        /// </returns>
+        /// <param name="vel">
+        ///     The current horizontal velocity of all sprites in the game.
+        /// </param>
+        private double UpdateX(double vel)
+        {
+            // get acceleration from key presses
+            double acc = 0;
+            if (SplashKit.KeyDown(SplashKitSDK.KeyCode.RightKey)) {
+                acc -= 0.35;
+            }
+            if (SplashKit.KeyDown(SplashKitSDK.KeyCode.LeftKey)) {
+                acc += 0.35;
+            }
+
+            // calculate velocity from acceleration
+            vel += acc;
+
+            // reduce velocity (automatically limits max speed)
+            vel *= 0.95;
+            if (Math.Abs(vel) < 0.25) // come to a stop
+            {
+                vel = 0;
+            }
+
+            // complete initial motion update
+            foreach (Sprite sprite in GetNonPlayerSprites())
+            {
+                sprite.Update(vel, 0);
+            }
+
+            // check if collisions were caused by this movement
+            bool collisionFound = false;
+            foreach (Platform platform in _platforms)
+            {
+                if (_player.CheckCollision(platform))
+                {
+                    collisionFound = true;
+                    break;
+                }
+            }
+
+            // if no collision found - return the validated velocity
+            if (!collisionFound)
+            {
+                return vel;
+            }
+
+            // if collision found - move back and retry
+            foreach (Sprite sprite in GetNonPlayerSprites())
+            {
+                sprite.Update(vel, 0, true);
+            }
+
+            // no valid velocity found - prevent horizontal motion
+            return 0;
+        }
+
+        /// <summary>
+        /// Updates the vertical positions of all sprites in the window based
+        /// on the keys pressed and sprite collisions.
+        /// </summary>
+        /// <returns>
+        /// Returns the vertical velocity of all sprites in the window.
+        /// Negative values indicate that the player is moving down (all other
+        /// sprites a moving up).
+        /// </returns>
+        /// <param name="vel">
+        ///     The current vertical velocity of all sprites in the game.
+        /// </param>
+        private double UpdateY(double vel)
+        {
+            // jump if up key pressed + vertical velocity is 0 (this only
+            // happens if standing on a platform)
+            double acc = 0;
+            if (
+                    (SplashKit.KeyDown(SplashKitSDK.KeyCode.UpKey))
+                    && (vel == 0)
+            ) {
+                acc = 15;
+            }
+
+            // gravity
+            acc -= 0.251;
+
+            // calculate velocity from acceleration
+            vel += acc;
+
+            // reduce velocity (automatically limits max speed)
+            vel *= 0.99;
+
+            // complete initial motion update
+            foreach (Sprite sprite in GetNonPlayerSprites())
+            {
+                sprite.Update(0, vel);
+            }
+
+            // check if collisions were caused by this movement
+            bool collisionFound = false;
+            foreach (Platform platform in _platforms)
+            {
+                if (_player.CheckCollision(platform))
+                {
+                    collisionFound = true;
+                    break;
+                }
+            }
+
+            // if no collision found - return the validated velocity
+            if (!collisionFound)
+            {
+                return vel;
+            }
+
+            // if collision found - move back and retry
+            foreach (Sprite sprite in GetNonPlayerSprites())
+            {
+                sprite.Update(0, vel, true);
+            }
+
+            // no valid velocity found - prevent vertical motion
+            return 0;
         }
     }
 
@@ -1561,7 +1788,7 @@ namespace _7_3_CustomProgramCode
                     case Screen.Lvl0:
                         // play level 0
                         if (a == null) { s = Screen.Login; break; }
-                        lvl_score = Level.PlayLevel(LevelNumber.L0, w);
+                        lvl_score = new Level(LevelNumber.L0, w).Play();
                         if (lvl_score == -1) { s = Screen.Quit; }
                         else if (lvl_score == -2) {
                             // escaped
@@ -1583,7 +1810,7 @@ namespace _7_3_CustomProgramCode
                         if (a == null) { s = Screen.Login; break; }
                         a.AddScore(
                             LevelNumber.L1,
-                            Level.PlayLevel(LevelNumber.L1, w)
+                            new Level(LevelNumber.L1, w).Play()
                         );
                         s = Screen.PlayMenu;
                         break;
@@ -1592,7 +1819,7 @@ namespace _7_3_CustomProgramCode
                         if (a == null) { s = Screen.Login; break; }
                         a.AddScore(
                             LevelNumber.L2,
-                            Level.PlayLevel(LevelNumber.L2, w)
+                            new Level(LevelNumber.L2, w).Play()
                         );
                         s = Screen.PlayMenu;
                         break;
@@ -1601,7 +1828,7 @@ namespace _7_3_CustomProgramCode
                         if (a == null) { s = Screen.Login; break; }
                         a.AddScore(
                             LevelNumber.L3,
-                            Level.PlayLevel(LevelNumber.L3, w)
+                            new Level(LevelNumber.L3, w).Play()
                         );
                         s = Screen.PlayMenu;
                         break;
@@ -1610,7 +1837,7 @@ namespace _7_3_CustomProgramCode
                         if (a == null) { s = Screen.Login; break; }
                         a.AddScore(
                             LevelNumber.L4,
-                            Level.PlayLevel(LevelNumber.L4, w)
+                            new Level(LevelNumber.L4, w).Play()
                         );
                         s = Screen.PlayMenu;
                         break;
@@ -1619,7 +1846,7 @@ namespace _7_3_CustomProgramCode
                         if (a == null) { s = Screen.Login; break; }
                         a.AddScore(
                             LevelNumber.L5,
-                            Level.PlayLevel(LevelNumber.L5, w)
+                            new Level(LevelNumber.L5, w).Play()
                         );
                         s = Screen.PlayMenu;
                         break;
@@ -1628,7 +1855,7 @@ namespace _7_3_CustomProgramCode
                         if (a == null) { s = Screen.Login; break; }
                         a.AddScore(
                             LevelNumber.L6,
-                            Level.PlayLevel(LevelNumber.L6, w)
+                            new Level(LevelNumber.L6, w).Play()
                         );
                         s = Screen.PlayMenu;
                         break;
@@ -1637,7 +1864,7 @@ namespace _7_3_CustomProgramCode
                         if (a == null) { s = Screen.Login; break; }
                         a.AddScore(
                             LevelNumber.L7,
-                            Level.PlayLevel(LevelNumber.L7, w)
+                            new Level(LevelNumber.L7, w).Play()
                         );
                         s = Screen.PlayMenu;
                         break;
@@ -1646,7 +1873,7 @@ namespace _7_3_CustomProgramCode
                         if (a == null) { s = Screen.Login; break; }
                         a.AddScore(
                             LevelNumber.L8,
-                            Level.PlayLevel(LevelNumber.L8, w)
+                            new Level(LevelNumber.L8, w).Play()
                         );
                         s = Screen.PlayMenu;
                         break;
@@ -1655,7 +1882,7 @@ namespace _7_3_CustomProgramCode
                         if (a == null) { s = Screen.Login; break; }
                         a.AddScore(
                             LevelNumber.L9,
-                            Level.PlayLevel(LevelNumber.L9, w)
+                            new Level(LevelNumber.L9, w).Play()
                         );
                         s = Screen.PlayMenu;
                         break;
