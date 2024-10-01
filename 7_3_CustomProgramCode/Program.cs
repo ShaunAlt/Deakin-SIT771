@@ -34,21 +34,6 @@ using System.Xml.Linq;
 namespace _7_3_CustomProgramCode
 {
     /// <summary>
-    /// Raised when the program encounters an invalid <c>LevelNumber</c> enum
-    /// value.
-    /// </summary>
-    /// <see cref="LevelNumber"/>
-    public class InvalidLevelNumberException : System.Exception
-    {
-        public InvalidLevelNumberException() { }
-        public InvalidLevelNumberException(string message) : base(message) { }
-        public InvalidLevelNumberException(
-            string message,
-            System.Exception inner
-        ) : base(message, inner) { }
-    }
-
-    /// <summary>
     /// Represents a single player account in the game.
     /// </summary>
     /// <remarks>
@@ -365,6 +350,21 @@ namespace _7_3_CustomProgramCode
             // data
             doc.Save(filename);
         }
+    }
+
+    /// <summary>
+    /// Raised when the program encounters an invalid <c>LevelNumber</c> enum
+    /// value.
+    /// </summary>
+    /// <see cref="LevelNumber"/>
+    public class InvalidLevelNumberException : System.Exception
+    {
+        public InvalidLevelNumberException() { }
+        public InvalidLevelNumberException(string message) : base(message) { }
+        public InvalidLevelNumberException(
+            string message,
+            System.Exception inner
+        ) : base(message, inner) { }
     }
 
     /// <summary>
