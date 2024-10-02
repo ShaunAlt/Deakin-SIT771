@@ -1901,157 +1901,274 @@ namespace _7_3_CustomProgramCode
         }
     }
 
+    /// <summary>
+    /// Main Program
+    /// </summary>
+    /// <remarks>
+    /// Methods
+    /// <list type="bullet">
+    ///     <item>+ Main() : <c>void</c> &lt;&lt; static &gt;&gt;</item>
+    /// </list>
+    /// </remarks>
     public class Program
     {
+        /// <summary>
+        /// Main Method containing the main program functionality + loop.
+        /// </summary>
         public static void Main()
         {
-            // data file name
+            // initialize filename for reading and writing data
             string filename = "test2.xml";
-            // create window
-            Window w = new Window("Game Window", 1200, 800);
 
-            // initialize screen
-            // Screen s = Screen.Login;
-            Screen s = Screen.Lvl1; // testing
+            // create game window
+            Window w = new Window("Platformer Pro", 1200, 800);
 
-            // read data
+            // initialize screen to login page
+            Screen s = Screen.Login;
+
+            // read accounts data from xml save file
             Account.ReadData(filename);
 
             // initialize account logged in
-            // Account? a = null;
-            Account? a = Account.GetAccount("test"); // testing
-
-            int lvl_score;
+            Account? a = null;
 
             // Main loop to update the windows
             while ((!w.CloseRequested) && (s != Screen.Quit))
             {
                 switch (s)
                 {
-                    case Screen.Login:
+                    case Screen.Login: // player login
+                        // get account from login screen
                         a = ScreenLogin(w);
-                        // Console.WriteLine($"{Account.accounts}");
-                        if (a != null) { s = Screen.Main; }
-                        else { s = Screen.Quit; }
-                        break;
-                    case Screen.Main:
-                        // draw main menu
-                        if (a == null) { s = Screen.Login; break; }
-                        s = ScreenMain(a, w);
-                        break;
-                    case Screen.PlayMenu:
-                        // draw level selection menu
-                        if (a == null) { s = Screen.Login; break; }
-                        s = ScreenPlayMenu(a, w);
-                        break;
-                    case Screen.Scores:
-                        // draw user and overall high scores
-                        if (a == null) { s = Screen.Login; break; }
-                        s = ScreenScores(a, w);
-                        break;
-                    case Screen.Settings:
-                        // draw controller settings
-                        s = ScreenSettings(w);
-                        break;
-                    case Screen.Lvl0:
-                        // play level 0
-                        if (a == null) { s = Screen.Login; break; }
-                        lvl_score = new Level(LevelNumber.L0, w).Play();
-                        if (lvl_score == -1) { s = Screen.Quit; }
-                        else if (lvl_score == -2) {
-                            // escaped
-                            s = Screen.PlayMenu;
+                        // valid login - go to main menu
+                        if (a != null)
+                        {
+                            s = Screen.Main;
                         }
-                        else {
-                            a.AddScore(LevelNumber.L0, lvl_score);
-                            s = Screen.PlayMenu;
+                        // no login provided - quit the game
+                        else
+                        {
+                            s = Screen.Quit;
+                        }
+                        break;
+                    case Screen.Main: // main game menu
+                        // validate account
+                        if (a == null)
+                        {
+                            // return to login screen
+                            s = Screen.Login;
+                            break;
                         }
 
-                        // a.AddScore(
-                        //     LevelNumber.L0,
-                        //     Level.PlayLevel(LevelNumber.L0, w)
-                        // );
+                        // get next screen from main menu
+                        s = ScreenMain(a, w);
+                        break;
+                    case Screen.PlayMenu: // level selection menu
+                        // validate account
+                        if (a == null)
+                        {
+                            // return to login screen
+                            s = Screen.Login;
+                            break;
+                        }
+
+                        // get next screen from level selection menu
+                        s = ScreenPlayMenu(a, w);
+                        break;
+                    case Screen.Scores: // user and overall high scores
+                        // validate account
+                        if (a == null)
+                        {
+                            // return to login screen
+                            s = Screen.Login;
+                            break;
+                        }
+
+                        // get next screen from highscores screen
+                        s = ScreenScores(a, w);
+                        break;
+                    case Screen.Settings: // settings / instructions
+                        // get next screen from settings screen
+                        s = ScreenSettings(w);
+                        break;
+                    case Screen.Lvl0: // play level 0
+                        // validate account
+                        if (a == null)
+                        {
+                            // return to login screen
+                            s = Screen.Login;
+                            break;
+                        }
+
+                        // plays level and adds score to player account
+                        a.AddScore(
+                            LevelNumber.L0,
+                            new Level(LevelNumber.L0, w).Play()
+                        );
+
+                        // return to play menu
                         s = Screen.PlayMenu;
                         break;
-                    case Screen.Lvl1:
-                        // play level 1
-                        if (a == null) { s = Screen.Login; break; }
+                    case Screen.Lvl1: // play level 1
+                        // validate account
+                        if (a == null)
+                        {
+                            // return to login screen
+                            s = Screen.Login;
+                            break;
+                        }
+                        
+                        // plays level and adds score to player account
                         a.AddScore(
                             LevelNumber.L1,
                             new Level(LevelNumber.L1, w).Play()
                         );
+
+                        // return to play menu
                         s = Screen.PlayMenu;
                         break;
-                    case Screen.Lvl2:
-                        // play level 2
-                        if (a == null) { s = Screen.Login; break; }
+                    case Screen.Lvl2: // play level 2
+                        // validate account
+                        if (a == null)
+                        {
+                            // return to login screen
+                            s = Screen.Login;
+                            break;
+                        }
+                        
+                        // plays level and adds score to player account
                         a.AddScore(
                             LevelNumber.L2,
                             new Level(LevelNumber.L2, w).Play()
                         );
+
+                        // return to play menu
                         s = Screen.PlayMenu;
                         break;
-                    case Screen.Lvl3:
-                        // play level 3
-                        if (a == null) { s = Screen.Login; break; }
+                    case Screen.Lvl3: // play level 3
+                        // validate account
+                        if (a == null)
+                        {
+                            // return to login screen
+                            s = Screen.Login;
+                            break;
+                        }
+                        
+                        // plays level and adds score to player account
                         a.AddScore(
                             LevelNumber.L3,
                             new Level(LevelNumber.L3, w).Play()
                         );
+
+                        // return to play menu
                         s = Screen.PlayMenu;
                         break;
-                    case Screen.Lvl4:
-                        // play level 4
-                        if (a == null) { s = Screen.Login; break; }
+                    case Screen.Lvl4: // play level 4
+                        // validate account
+                        if (a == null)
+                        {
+                            // return to login screen
+                            s = Screen.Login;
+                            break;
+                        }
+                        
+                        // plays level and adds score to player account
                         a.AddScore(
                             LevelNumber.L4,
                             new Level(LevelNumber.L4, w).Play()
                         );
+
+                        // return to play menu
                         s = Screen.PlayMenu;
                         break;
-                    case Screen.Lvl5:
-                        // play level 5
-                        if (a == null) { s = Screen.Login; break; }
+                    case Screen.Lvl5: // play level 5
+                        // validate account
+                        if (a == null)
+                        {
+                            // return to login screen
+                            s = Screen.Login;
+                            break;
+                        }
+                        
+                        // plays level and adds score to player account
                         a.AddScore(
                             LevelNumber.L5,
                             new Level(LevelNumber.L5, w).Play()
                         );
+
+                        // return to play menu
                         s = Screen.PlayMenu;
                         break;
-                    case Screen.Lvl6:
-                        // play level 6
-                        if (a == null) { s = Screen.Login; break; }
+                    case Screen.Lvl6: // play level 6
+                        // validate account
+                        if (a == null)
+                        {
+                            // return to login screen
+                            s = Screen.Login;
+                            break;
+                        }
+                        
+                        // plays level and adds score to player account
                         a.AddScore(
                             LevelNumber.L6,
                             new Level(LevelNumber.L6, w).Play()
                         );
+
+                        // return to play menu
                         s = Screen.PlayMenu;
                         break;
-                    case Screen.Lvl7:
-                        // play level 7
-                        if (a == null) { s = Screen.Login; break; }
+                    case Screen.Lvl7: // play level 7
+                        // validate account
+                        if (a == null)
+                        {
+                            // return to login screen
+                            s = Screen.Login;
+                            break;
+                        }
+                        
+                        // plays level and adds score to player account
                         a.AddScore(
                             LevelNumber.L7,
                             new Level(LevelNumber.L7, w).Play()
                         );
+
+                        // return to play menu
                         s = Screen.PlayMenu;
                         break;
-                    case Screen.Lvl8:
-                        // play level 8
-                        if (a == null) { s = Screen.Login; break; }
+                    case Screen.Lvl8: // play level 8
+                        // validate account
+                        if (a == null)
+                        {
+                            // return to login screen
+                            s = Screen.Login;
+                            break;
+                        }
+                        
+                        // plays level and adds score to player account
                         a.AddScore(
                             LevelNumber.L8,
                             new Level(LevelNumber.L8, w).Play()
                         );
+
+                        // return to play menu
                         s = Screen.PlayMenu;
                         break;
-                    case Screen.Lvl9:
-                        // play level 9
-                        if (a == null) { s = Screen.Login; break; }
+                    case Screen.Lvl9: // play level 9
+                        // validate account
+                        if (a == null)
+                        {
+                            // return to login screen
+                            s = Screen.Login;
+                            break;
+                        }
+                        
+                        // plays level and adds score to player account
                         a.AddScore(
                             LevelNumber.L9,
                             new Level(LevelNumber.L9, w).Play()
                         );
+
+                        // return to play menu
                         s = Screen.PlayMenu;
                         break;
                 }
@@ -2059,6 +2176,8 @@ namespace _7_3_CustomProgramCode
 
             // Close game window
             w.Close();
+
+            // save accounts data to save file
             Account.SaveData(filename);
         }
 
