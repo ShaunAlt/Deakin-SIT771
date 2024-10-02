@@ -396,6 +396,23 @@ namespace _7_3_CustomProgramCode
     }
 
     /// <summary>
+    /// Raised when the program encounters an invalid <c>UIButtonType</c> enum
+    /// value.
+    /// </summary>
+    /// <see cref="UIButtonType"/>
+    public class InvalidButtonTypeException : System.Exception
+    {
+        public InvalidButtonTypeException() { }
+        public InvalidButtonTypeException(
+            string message
+        ) : base(message) { }
+        public InvalidButtonTypeException(
+            string message,
+            System.Exception inner
+        ) : base(message, inner) { }
+    }
+
+    /// <summary>
     /// Raised when the program encounters an invalid <c>LevelNumber</c> enum
     /// value.
     /// </summary>
@@ -2647,67 +2664,50 @@ namespace _7_3_CustomProgramCode
         }
     }
     
-    /* ************************************************************************
-     * UI Parent
-     * ***********************************************************************/
+    /// <summary>
+    /// Contains base functionality that all UI elements implement.
+    /// </summary>
+    /// <remarks>
+    /// Fields + Properties
+    /// <list type="bullet">
+    ///     <item># _label : <c>string</c></item>
+    ///     <item># _rect : <c>SplashKitSDK.Rectangle</c></item>
+    ///     <item># _window : <c>SplashKitSDK.Window</c></item>
+    ///     <item>+ Pos : <c>SplashKitSDK.Point2D</c> &lt;&lt; readonly &gt;&gt;</item>
+    /// </list>
+    /// 
+    /// Methods
+    /// <list type="bullet">
+    ///     <item>+ Clicked() : <c>bool</c></item>
+    ///     <item>+ Draw() : <c>void</c> &lt;&lt; abstract &gt;&gt;</item>
+    ///     <item>+ MouseOver() : <c>bool</c></item>
+    ///     <item>+ UIBase(label, x, y, width, height, window) : <c>UIBase</c></item>
+    ///     <item>+ Update() : <c>bool</c> &lt;&lt; virtual &gt;&gt;</item>
+    /// </list>
+    /// </remarks>
+    /// <see cref="UIButton"/>
+    /// <see cref="UIText"/>
+    /// <see cref="UITextBox"/>
     public abstract class UIBase
     {
-        /*
-        UI Parent
-        -
-        Represents a base class for all user interface elements.
-
-        Attributes / Fields
-        -
-        - _label : `string`
-            - String of the text label to be displayed for the given user
-                interface element.
-        - _rect : `SplashKitSDK.Rectangle`
-            - Rectangle box of the user interface element.
-        - _window : `SplashKitSDK.Window`
-            - Game window to display the user interface element on.
-
-        Constants
-        -
-        None
-
-        Methods
-        -
-        - Clicked() : `void`
-            - Public Method.
-            - Checks if the interface element has been clicked.
-        - Draw() : `void`
-            - Public Abstract Method.
-            - Draws the user interface element to the screen.
-        - MouseOver() : `bool`
-            - Public Method.
-            - Checks if the mouse is currently over the interface element.
-        - UIBase(label, x, y, width, height, window) : `UIBase`
-            - Public Constructor Method.
-            - Creates a new user interface base element.
-        - Update() : `void`
-            - Public Virtual Method.
-            - Updates the user interface element's state.
-
-        Properties
-        -
-        - height : `double`
-            - Height of the user interface element.
-        - pos : `SplashKitSDK.Point2D`
-            - 2D coordinate of the centre of the user interface element.
-        - width : `double`
-            - Width of the user interface element.
-        */
-
-        // **********
-        // Attributes
+        /// <summary>
+        /// String of the text label to be displayed on the ui element.
+        /// </summary>
         protected string _label;
+
+        /// <summary>
+        /// Rectangle box of the ui element.
+        /// </summary>
         protected SplashKitSDK.Rectangle _rect;
+
+        /// <summary>
+        /// Window to display the ui element on.
+        /// </summary>
         protected SplashKitSDK.Window _window;
 
-        // **********
-        // Properties
-        public double height { get { return _rect.Height; } }
+        /// <summary>
+        /// Position of the ui element on the window.
+        /// </summary>
         public SplashKitSDK.Point2D pos { get {
             return new SplashKitSDK.Point2D()
             {
@@ -2715,10 +2715,51 @@ namespace _7_3_CustomProgramCode
                 Y = _rect.Y + (_rect.Height / 2)
             };
         }}
-        public double width { get { return _rect.Width; } }
 
-        // ***********
-        // Constructor
+        /// <summary>
+        /// Checks if the ui element was clicked.
+        /// </summary>
+        /// <returns>
+        /// Whether or not the ui element was clicked.
+        /// </returns>
+        public bool Clicked()
+        {
+            // check if mouse is over this element + clicked
+            return (
+                (MouseOver())
+                && (SplashKit.MouseClicked(SplashKitSDK.MouseButton.LeftButton))
+            );
+        }
+
+        /// <summary>
+        /// Draws the ui element to the window.
+        /// </summary>
+        public abstract void Draw();
+
+        /// <summary>
+        /// Checks if the ui element is currently being hovered over.
+        /// </summary>
+        /// <returns>
+        /// Whether or not the ui element is currently being hovered over.
+        /// </returns>
+        public bool MouseOver()
+        {
+            // check if mouse is currently over the element rectangle
+            return SplashKit.PointInRectangle(
+                SplashKit.MousePosition(),
+                _rect
+            );
+        }
+
+        /// <summary>
+        /// Creates a new ui element.
+        /// </summary>
+        /// <param name="label">Label of the ui element.</param>
+        /// <param name="x">X-Coordinate of the ui element.</param>
+        /// <param name="y">Y-Coordinate of the ui element.</param>
+        /// <param name="width">Width of the ui element.</param>
+        /// <param name="height">Height of the ui element.</param>
+        /// <param name="window">Window to display the ui element.</param>
         public UIBase(
                 string label,
                 double x,
@@ -2744,37 +2785,173 @@ namespace _7_3_CustomProgramCode
             _window = window;
         }
 
-        // **************
-        // Get if Clicked
-        public bool Clicked()
-        {
-            // check if mouse is over this element + clicked
-            return (
-                MouseOver() 
-                && SplashKit.MouseClicked(SplashKitSDK.MouseButton.LeftButton)
-            );
-        }
-
-        // ***************
-        // Draw UI Element
-        public abstract void Draw();
-
-        // *******************
-        // Check if Mouse Over
-        public bool MouseOver()
-        {
-            // check if mouse is currently over the element rectangle
-            return SplashKit.PointInRectangle(SplashKit.MousePosition(), _rect);
-        }
-
-        // *****************
-        // Update UI Element
+        /// <summary>
+        /// Updates the UI element.
+        /// </summary>
         public virtual void Update()
         {
             // do nothing by default
+            return;
         }
     }
 
+    /// <summary>
+    /// Used to create a button in the ui that can be interacted with.
+    /// </summary>
+    /// <remarks>
+    /// Fields + Properties
+    /// <list type="bullet">
+    ///     <item>- _dark : <c>SplashKitSDK.Bitmap</c></item>
+    ///     <item>- _light : <c>SplashKitSDK.Bitmap</c></item>
+    ///     <item># _label : <c>string</c></item>
+    ///     <item># _rect : <c>SplashKitSDK.Rectangle</c></item>
+    ///     <item># _window : <c>SplashKitSDK.Window</c></item>
+    ///     <item>+ Pos : <c>SplashKitSDK.Point2D</c> &lt;&lt; readonly &gt;&gt;</item>
+    /// </list>
+    /// 
+    /// Methods
+    /// <list type="bullet">
+    ///     <item>+ Clicked() : <c>bool</c></item>
+    ///     <item>+ Draw() : <c>void</c> &lt;&lt; override &gt;&gt;</item>
+    ///     <item>- GetBitmapDirectory(type_) : <c>string</c> &lt;&lt; static &gt;&gt;</item>
+    ///     <item>+ MouseOver() : <c>bool</c></item>
+    ///     <item>+ UIButton(type_, x, y, window) : <c>UIButton</c></item>
+    ///     <item>+ Update() : <c>bool</c> &lt;&lt; virtual &gt;&gt;</item>
+    /// </list>
+    /// </remarks>
+    /// <see cref="UIBase"/>
+    /// <see cref="UIButtonType"/>
+    public class UIButton : UIBase
+    {
+        /// <summary>
+        /// Dark image for the button. Used when the button is being hovered
+        /// over.
+        /// </summary>
+        private SplashKitSDK.Bitmap _dark;
+
+        /// <summary>
+        /// Light image for the button. Used when the button is not being
+        /// hovered over.
+        /// </summary>
+        private SplashKitSDK.Bitmap _light;
+
+        /// <summary>
+        /// Draws the ui button to the window.
+        /// </summary>
+        public override void Draw()
+        {
+            // lambda to draw bitmap
+            Func<SplashKitSDK.Bitmap, void> _DrawBitmap = (bmp) =>
+            {
+                SplashKit.DrawBitmapOnWindow(
+                    _window,
+                    bmp,
+                    _rect.X,
+                    _rect.Y
+                );
+            };
+
+            // draw button
+            if (MouseOver()) // draw dark image if hovered over
+            {
+                _DrawBitmap(_dark);
+            }
+            else // draw light image if not hovered over
+            {
+                _DrawBitmap(_light);
+            }
+        }
+
+        /// <summary>
+        /// Gets the directory containing the image files for the provided ui
+        /// button type.
+        /// </summary>
+        /// <param name="type_">UI button type to get the images for.</param>
+        /// <returns>
+        /// Directory containing the UI button images.
+        /// </returns>
+        private static string GetBitmapDirectory(UIButtonType type_)
+        {
+            switch (type_)
+            {
+                case UIButtonType.Back: // back button
+                    return "Resources/images/Buttons/Back";
+                case UIButtonType.Exit: // exit button
+                    return "Resources/images/Buttons/Exit";
+                case UIButtonType.Highscores: // high scores button
+                    return "Resources/images/Buttons/Highscores";
+                case UIButtonType.Instructions: // instructions button
+                    return "Resources/images/Buttons/Instructions";
+                case UIButtonType.Level1: // level 1 button
+                    return "Resources/images/Buttons/Level/1";
+                case UIButtonType.Level2: // level 2 button
+                    return "Resources/images/Buttons/Level/2";
+                case UIButtonType.Level3: // level 3 button
+                    return "Resources/images/Buttons/Level/3";
+                case UIButtonType.Level4: // level 4 button
+                    return "Resources/images/Buttons/Level/4";
+                case UIButtonType.Level5: // level 5 button
+                    return "Resources/images/Buttons/Level/5";
+                case UIButtonType.Level6: // level 6 button
+                    return "Resources/images/Buttons/Level/6";
+                case UIButtonType.Level7: // level 7 button
+                    return "Resources/images/Buttons/Level/7";
+                case UIButtonType.Level8: // level 8 button
+                    return "Resources/images/Buttons/Level/8";
+                case UIButtonType.Level9: // level 9 button
+                    return "Resources/images/Buttons/Level/9";
+                case UIButtonType.Level10: // level 10 button
+                    return "Resources/images/Buttons/Level/10";
+                case UIButtonType.Login: // login button
+                    return "Resources/images/Buttons/Login";
+                case UIButtonType.Logout: // logout button
+                    return "Resources/images/Buttons/Logout";
+                case UIButtonType.Play: // play button
+                    return "Resources/images/Buttons/Play";
+                default: // unknown button type
+                    throw new InvalidButtonTypeException(
+                        $"Unknown button type = {type_}"
+                    );
+            }
+        }
+
+        /// <summary>
+        /// Creates a new ui button.
+        /// </summary>
+        /// <param name="type_">Type of button to create.</param>
+        /// <param name="x">X-Coordinate of the button.</param>
+        /// <param name="y">Y-Coordinate of the button.</param>
+        /// <param name="window">Window to display the button on.</param>
+        /// <returns>
+        /// New ui button.
+        /// </returns>
+        public UIButton(
+                UIButtonType type_,
+                double x,
+                double y,
+                SplashKitSDK.Window window
+        ) : base("Button Label", x, y, 200, 60, window)
+        {
+            // get the bitmap directory of the ui button
+            string _dir = GetBitmapDirectory(type_);
+
+            // create dark image
+            _dark = new SplashKitSDK.Bitmap(
+                $"{(int)type_}_dark",
+                $"{_dir}/dark.png"
+            );
+
+            // create light image
+            _light = new SplashKitSDK.Bitmap(
+                $"{(int)type_}_light",
+                $"{_dir}/light.png"
+            );
+        }
+    }
+
+    /// <summary>
+    /// Enumeration for the different buttons that are implemented in the game.
+    /// </summary>
     public enum UIButtonType {
         Back,
         Exit,
@@ -2793,125 +2970,6 @@ namespace _7_3_CustomProgramCode
         Login,
         Logout,
         Play,
-    }
-    /* ************************************************************************
-     * UI Button
-     * ***********************************************************************/
-    public class UIButton : UIBase
-    {
-        /*
-        UI Button
-        -
-        Represents an individual button in the user interface.
-
-        Constants
-        -
-        - COL_HOVER_BORDER : `SplashKitSDK.Color`
-            - Border colour used when the button is being hovered over.
-        - COL_HOVER_FILL : `SplashKitSDK.Color`
-            - Fill colour used when the button is being hovered over.
-        - COL_NORMAL_BORDER : `SplashKitSDK.Color`
-            - Border colour used when the button is not being hovered over.
-        - COL_NORMAL_FILL : `SplashKitSDK.Color`
-            - Fill colour used when the button is not being hovered over.
-        - COL_TEXT : `SplashKitSDK.Color`
-            - Color used for writing the text for the button.
-
-        Methods
-        -
-        - Draw() : `void`
-            - Public Override Method.
-            - Draws the user interface button to the screen.
-        - UIButton(label, x, y, width, height, window) : `UIButton`
-            - Public Constructor Method.
-            - Creates a new user interface button.
-        */
-
-        // *********
-        // Constants
-        private SplashKitSDK.Bitmap _dark; // dark image
-        private SplashKitSDK.Bitmap _light; // light image
-        // ***********
-        // Constructor
-        public UIButton(
-                UIButtonType type_,
-                double x,
-                double y,
-                SplashKitSDK.Window window
-        ) : base("Button Label", x, y, 200, 60, window)
-        {
-            string _dir = GetBitmapDirectory(type_);
-            _dark = new SplashKitSDK.Bitmap($"{(int)type_}_dark", $"{_dir}/dark.png");
-            _light = new SplashKitSDK.Bitmap($"{(int)type_}_light", $"{_dir}/light.png");
-        }
-
-        private string GetBitmapDirectory(UIButtonType type_)
-        {
-            switch (type_)
-            {
-                case UIButtonType.Back:
-                    return "Resources/images/Buttons/Back";
-                case UIButtonType.Exit:
-                    return "Resources/images/Buttons/Exit";
-                case UIButtonType.Highscores:
-                    return "Resources/images/Buttons/Highscores";
-                case UIButtonType.Instructions:
-                    return "Resources/images/Buttons/Instructions";
-                case UIButtonType.Level1:
-                    return "Resources/images/Buttons/Level/1";
-                case UIButtonType.Level2:
-                    return "Resources/images/Buttons/Level/2";
-                case UIButtonType.Level3:
-                    return "Resources/images/Buttons/Level/3";
-                case UIButtonType.Level4:
-                    return "Resources/images/Buttons/Level/4";
-                case UIButtonType.Level5:
-                    return "Resources/images/Buttons/Level/5";
-                case UIButtonType.Level6:
-                    return "Resources/images/Buttons/Level/6";
-                case UIButtonType.Level7:
-                    return "Resources/images/Buttons/Level/7";
-                case UIButtonType.Level8:
-                    return "Resources/images/Buttons/Level/8";
-                case UIButtonType.Level9:
-                    return "Resources/images/Buttons/Level/9";
-                case UIButtonType.Level10:
-                    return "Resources/images/Buttons/Level/10";
-                case UIButtonType.Login:
-                    return "Resources/images/Buttons/Login";
-                case UIButtonType.Logout:
-                    return "Resources/images/Buttons/Logout";
-                case UIButtonType.Play:
-                    return "Resources/images/Buttons/Play";
-                default:
-                    return "";
-            }
-        }
-
-        // ***************
-        // Draw UI Element
-        public override void Draw()
-        {
-            // draw button fill + border
-            if (MouseOver())
-            {
-                SplashKit.DrawBitmapOnWindow(
-                    _window,
-                    _dark,
-                    _rect.X,
-                    _rect.Y
-                );
-            }
-            else
-            {
-                SplashKit.DrawBitmapOnWindow(
-                    _window,
-                    _light,
-                    _rect.X,
-                    _rect.Y
-                );
-            }
-        }
     }
 
     public class UIText : UIBase
