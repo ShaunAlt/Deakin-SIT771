@@ -335,12 +335,12 @@ namespace _7_3_CustomProgramCode
                                     // score in the player account
                                     new XElement("Score",
                                         // save the level the score is for
-                                        new XAttribute("Level", (int)s.level),
+                                        new XAttribute("Level", (int)s.Lvl),
                                         // save the score achieved
-                                        new XAttribute("Score", s.score),
+                                        new XAttribute("Score", s.Value),
                                         // save the date/time the score was
                                         // achieved
-                                        new XAttribute("DateTime", s.datetime)
+                                        new XAttribute("DateTime", s.DT)
                                     )
                                 )
                             )
@@ -550,7 +550,7 @@ namespace _7_3_CustomProgramCode
             _window.Clear(SplashKitSDK.Color.White);
 
             // draw the player
-            _player.DrawPlayer(vel.X, vel.Y);
+            _player.Draw(vel.X, vel.Y);
 
             // draw the non-player sprites
             foreach (Sprite sprite in GetNonPlayerSprites())
@@ -605,7 +605,7 @@ namespace _7_3_CustomProgramCode
             _window = w;
 
             // create the player
-            _player = new Player(600, 400, w);
+            _player = new Player(w);
 
             // create the platform, goal, and text element sprites for the
             // level based on the level number
@@ -1153,7 +1153,7 @@ namespace _7_3_CustomProgramCode
                         // staircase 4
                         new Platform(2200, 100, PlatformType.Large, w),
                         new Platform(2200, 100, PlatformType.Large90, w),
-                        new Platform(2000, 100, PlatformType.Large, w),
+                        new Platform(2000, 300, PlatformType.Large, w),
                     };
                     // create goal under last staircase
                     _goal = new Goal(2300, 400, w);
@@ -1658,7 +1658,8 @@ namespace _7_3_CustomProgramCode
     /// game level.
     /// </summary>
     /// <see cref="Platform"/>
-    public enum PlatformType {
+    public enum PlatformType
+    {
         Tiny,
         Tiny90,
         Small,
@@ -1699,7 +1700,8 @@ namespace _7_3_CustomProgramCode
     /// <see cref="Level"/>
     /// <see cref="Platform"/>
     /// <see cref="Sprite"/>
-    public class Player : Sprite {
+    public class Player : Sprite
+    {
         /// <summary>
         /// Collection of bitmaps used for animating the player when they are
         /// moving around in the screen.
@@ -1897,366 +1899,6 @@ namespace _7_3_CustomProgramCode
             // draw the player sprite
             Draw();
         }
-    }
-
-
-    /// <summary>
-    /// Represents an single score that a player achieved in the game.
-    /// </summary>
-    /// <remarks>
-    /// Fields + Properties
-    /// <list type="bullet">
-    ///     <item>+ DT : <c>DateTime</c> &lt;&lt; private set &gt;&gt;</item>
-    ///     <item>+ Lvl : <c>LevelNumber</c> &lt;&lt; private set &gt;&gt;</item>
-    ///     <item>+ Value : <c>int</c> &lt;&lt; private set &gt;&gt;</item>
-    /// </list>
-    /// 
-    /// Methods
-    /// <list type="bullet">
-    ///     <item>+ Score(value, lvl) : <c>Score</c></item>
-    ///     <item>+ Score(value, lvl, dt) : <c>Score</c></item>
-    /// </list>
-    /// </remarks>
-    /// <see cref="Account"/>
-    /// <see cref="LevelNumber"/>
-    public class Score
-    {
-        /*
-        Individual Player Level Score
-        -
-        Represents an individual score that a player got for a particular
-        level.
-
-        Attributes / Fields
-        -
-        - _datetime : `DateTime`
-            - Date/Time that the score was generated.
-        - _level : `LevelNumber`
-            - Number of the level that the score was generated in.
-        - _score : `int`
-            - Score value that the player achieved.
-
-        Constants
-        -
-        None
-
-        Methods
-        -
-        - Score(score, level) : `Score`
-            - Public Constructor Method.
-            - Creates a new score object with the given score and level number.
-
-        Properties
-        -
-        - datetime : `DateTime`
-            - Date/Time that the score was generated.
-        - level : `LevelNumber`
-            - Number of the level that the score was generated in.
-        - score : `int`
-            - Score value that the player achieved.
-        */
-
-        /// <summary>
-        /// Date/Time that the score was generated.
-        /// </summary>
-        public DateTime DT { get; private set; }
-
-        /// <summary>
-        /// Number of the level that the score was generated in.
-        /// </summary>
-        public LevelNumber Lvl { get; private set; }
-
-        /// <summary>
-        /// Score value that the player achieved.
-        /// </summary>
-        public int Value { get; private set }
-
-        /// <summary>
-        /// Creates a new player account score at the current date/time.
-        /// </summary>
-        /// <param name="value">Score value the player achieved.</param>
-        /// <param name="lvl">Level the player achieved the score on.</param>
-        /// <returns>
-        /// New player account score.
-        /// </returns>
-        public Score(
-            int value,
-            LevelNumber lvl
-        ) : this(value, lvl, DateTime.Now) { }
-
-        /// <summary>
-        /// Creates a new player account score.
-        /// </summary>
-        /// <param name="score">Score value the player achieved.</param>
-        /// <param name="level">Level the player achieved the score on.</param>
-        /// <param name="dt">Date/Time the player achieved the score.</param>
-        /// <returns>
-        /// New player account score.
-        /// </returns>
-        public Score(int score, LevelNumber level, DateTime dt)
-        {
-            // set date/time that score was achieved
-            DT = datetime;
-
-            // set the level number that the player achieved the score for
-            Lvl = level;
-
-            // set score value that the player achieved
-            Value = score;
-        }
-    }
-
-    /// <summary>
-    /// Enumeration for the different screens that are implemented in the game.
-    /// </summary>
-    public enum Screen {
-        Quit, // quit and save data
-        Login, // used to logging in a player
-        Main, // used for showing the main menu
-        PlayMenu, // used for selecting which level to play
-        Scores, // used to display user and overall high scores
-        Settings, // used to display the settings
-        Lvl0, // game level 1
-        Lvl1, // game level 2
-        Lvl2, // game level 3
-        Lvl3, // game level 4
-        Lvl4, // game level 5
-        Lvl5, // game level 6
-        Lvl6, // game level 7
-        Lvl7, // game level 8
-        Lvl8, // game level 9
-        Lvl9, // game level 10
-    }
-
-    /// <summary>
-    /// Represents an individual sprite in the game when the player is in a
-    /// particular level.
-    /// </summary>
-    /// <remarks>
-    /// Fields + Properties
-    /// <list type="bullet">
-    ///     <item>- _window : <c>SplashKitSDK.Window</c></item>
-    ///     <item>+ Bmp : <c>SplashKitSDK.Bmp | null</c></item>
-    ///     <item>+ Pos : <c>SplashKitSDK.Point2D Pos</c></item>
-    ///     <item>+ Txt : <c>string | null</c></item>
-    /// </list>
-    /// 
-    /// Methods
-    /// <list type="bullet">
-    ///     <item>+ Draw() : <c>void</c></item>
-    ///     <item>+ Draw(vel_x, vel_y) : <c>void</c> &lt;&lt; virtual &gt;&gt;</item>
-    ///     <item>+ GetRectangle() : <c>SplashKitSDK.Rectangle</c></item>
-    ///     <item>+ Sprite(x, y, bitmap_txt, window) : <c>Sprite</c></item>
-    ///     <item>+ Update(vel_x, vel_y, reverse=false) : <c>void</c></item>
-    /// </list>
-    /// </remarks>
-    /// <see cref="Level"/>
-    /// <see cref="Platform"/>
-    /// <see cref="Player"/>
-    /// <see cref="SpriteText"/>
-    public abstract class Sprite
-    {
-        /// <summary>
-        /// Game window the sprite will be drawn on.
-        /// </summary>
-        private SplashKitSDK.Window _window;
-        
-        /// <summary>
-        /// Bitmap of the sprite (if it has a bitmap). Either the <c>Txt</c> or
-        /// this should be <c>null</c>, and the other should contain a value.
-        /// </summary>
-        public SplashKitSDK.Bitmap? Bmp { get; protected set; }
-
-        /// <summary>
-        /// Position of the sprite on the game window.
-        /// </summary>
-        public SplashKitSDK.Point2D Pos { get; private set; }
-
-        /// <summary>
-        /// Text to display (instead of a bitmap). Either the <c>Bmp</c> or
-        /// this should be <c>null</c>, and the other should contain a value.
-        /// </summary>
-        public string? Txt { get; private set; }
-
-        /// <summary>
-        /// Draws the sprite on the screen.
-        /// </summary>
-        public void Draw()
-        {
-            // if the bitmap exists - draw it
-            if (Bmp != null)
-            {
-                SplashKit.DrawBitmapOnWindow(
-                    _window,
-                    Bmp,
-                    Pos.X,
-                    Pos.Y
-                );
-            }
-
-            // if the text exists - draw it
-            else if (Txt != null)
-            {
-                SplashKit.DrawTextOnWindow(
-                    _window,
-                    Txt,
-                    Color.Black,
-                    "Arial",
-                    20,
-                    Pos.X - (Txt.Length * 4),
-                    Pos.Y - 7
-                );
-            }
-
-            // neither exists - raise error
-            else
-            {
-                throw new InvalidSpriteDrawException(
-                    "Sprite unable to be drawn"
-                );
-            }
-        }
-
-        /// <summary>
-        /// Draws the sprite on the screen with x and y velocities for
-        /// animation.
-        /// </summary>
-        /// <param name="vel_x">Velocity of the sprite in the X-Axis.</param>
-        /// <param name="vel_y">Velocity of the sprite in the Y-Axis.</param>
-        public virtual void Draw(double vel_x, double vel_y)
-        {
-            // default to just running the normal draw function
-            Draw();
-        }
-
-        /// <summary>
-        /// Gets a rectangle of the bounds of the sprite which can be used for
-        /// checking rectangle collisions and other constraints.
-        /// </summary>
-        /// <returns>
-        /// Rectangle of the bounding box of the current sprite.
-        /// </returns>
-        public SplashKitSDK.Rectangle GetRectangle()
-        {
-            // use bitmap if possible
-            if (Bmp != null)
-            {
-                return new SplashKitSDK.Rectangle(
-                    Pos.X,
-                    Pos.Y,
-                    Bmp.Width,
-                    Bmp.Height
-                );
-            }
-            
-            // unable to create a bounding box from text or other data, so
-            // raise error
-            throw new InvalidSpriteRectangleException(
-                "Unable to create a rectangle for this sprite"
-            );
-        }
-
-        /// <summary>
-        /// Creates a new sprite in the game window for a particular level.
-        /// </summary>
-        /// <param name="x">Starting X-Coordinate of the sprite.</param>
-        /// <param name="y">Starting Y-Coordinate of the sprite.</param>
-        /// <param name="bitmap_txt">
-        ///     Bitmap resource location (if starting with "Resources/images"),
-        ///     or text to display on the sprite.
-        /// </param>
-        /// <param name="window">Game window to display the sprite on.</param>
-        public Sprite(
-            float x,
-            float y,
-            string bitmap_txt,
-            Window window
-        )
-        {
-            // store game window
-            _window = window;
-
-            // set bitmap and text
-            if (bitmap_txt.StartsWith("Resources/images"))
-            {
-                Bmp = new Bitmap(
-                    bitmap_txt.Split('/').Last().Split('.')[0], // image name
-                    bitmap_txt // file directory + name
-                );
-                Txt = null;
-            }
-            else
-            {
-                Bmp = null;
-                Txt = bitmap_txt;
-            }
-
-            // set initial position
-            Pos = new Point2D()
-            {
-                X = x,
-                Y = y
-            };
-        }
-        
-        /// <summary>
-        /// Updates the position of the sprite in the game window.
-        /// </summary>
-        /// <param name="vel_x">Velocity of the sprite in the X-Axis.</param>
-        /// <param name="vel_y">Velocity of the sprite in the Y-Axis.</param>
-        /// <param name="reverse">
-        ///     Whether or not to reverse the provided direction. Defaults to
-        ///     <c>false</c>, meaning that the provided values will be used.
-        /// </param>
-        public void Update(double vel_x, double vel_y, bool reverse = false)
-        {
-            // update x-axis position
-            Pos.X += (vel_x * (reverse ? -1 : 1));
-
-            // update y-axis position
-            Pos.Y += (vel_y * (reverse ? -1 : 1));
-        }
-    }
-    
-    /// <summary>
-    /// Represents a text element sprite within a game level.
-    /// </summary>
-    /// <remarks>
-    /// Fields + Properties
-    /// <list type="bullet">
-    ///     <item>+ Bmp : <c>SplashKitSDK.Bmp | null</c></item>
-    ///     <item>+ Pos : <c>SplashKitSDK.Point2D Pos</c></item>
-    ///     <item>+ Txt : <c>string | null</c></item>
-    /// </list>
-    /// 
-    /// Methods
-    /// <list type="bullet">
-    ///     <item>+ Draw() : <c>void</c></item>
-    ///     <item>+ Draw(vel_x, vel_y) : <c>void</c></item>
-    ///     <item>+ GetRectangle() : <c>SplashKitSDK.Rectangle</c></item>
-    ///     <item>+ SpriteText(window) : <c>SpriteText</c></item>
-    ///     <item>+ Update(vel_x, vel_y, reverse=false) : <c>void</c></item>
-    /// </list>
-    /// </remarks>
-    /// <see cref="Level"/>
-    /// <see cref="Sprite"/>
-    public class SpriteText : Sprite
-    {
-        /// <summary>
-        /// Creates a new sprite text element which can be used to display text
-        /// in a game level.
-        /// </summary>
-        /// <param name="x">Starting position X-Coordinate.</param>
-        /// <param name="y">Starting position Y-Coordinate.</param>
-        /// <param name="text">Text to display in the text element.</param>
-        /// <param name="window">Game window to display the text on.</param>
-        /// <returns></returns>
-        public SpriteText(
-            float x,
-            float y,
-            string text,
-            Window window
-        ) : base(x, y, text, window) { }
     }
 
     public class Program
@@ -2665,6 +2307,365 @@ namespace _7_3_CustomProgramCode
     }
     
     /// <summary>
+    /// Represents an single score that a player achieved in the game.
+    /// </summary>
+    /// <remarks>
+    /// Fields + Properties
+    /// <list type="bullet">
+    ///     <item>+ DT : <c>DateTime</c> &lt;&lt; private set &gt;&gt;</item>
+    ///     <item>+ Lvl : <c>LevelNumber</c> &lt;&lt; private set &gt;&gt;</item>
+    ///     <item>+ Value : <c>int</c> &lt;&lt; private set &gt;&gt;</item>
+    /// </list>
+    /// 
+    /// Methods
+    /// <list type="bullet">
+    ///     <item>+ Score(value, lvl) : <c>Score</c></item>
+    ///     <item>+ Score(value, lvl, dt) : <c>Score</c></item>
+    /// </list>
+    /// </remarks>
+    /// <see cref="Account"/>
+    /// <see cref="LevelNumber"/>
+    public class Score
+    {
+        /*
+        Individual Player Level Score
+        -
+        Represents an individual score that a player got for a particular
+        level.
+
+        Attributes / Fields
+        -
+        - _datetime : `DateTime`
+            - Date/Time that the score was generated.
+        - _level : `LevelNumber`
+            - Number of the level that the score was generated in.
+        - _score : `int`
+            - Score value that the player achieved.
+
+        Constants
+        -
+        None
+
+        Methods
+        -
+        - Score(score, level) : `Score`
+            - Public Constructor Method.
+            - Creates a new score object with the given score and level number.
+
+        Properties
+        -
+        - datetime : `DateTime`
+            - Date/Time that the score was generated.
+        - level : `LevelNumber`
+            - Number of the level that the score was generated in.
+        - score : `int`
+            - Score value that the player achieved.
+        */
+
+        /// <summary>
+        /// Date/Time that the score was generated.
+        /// </summary>
+        public DateTime DT { get; private set; }
+
+        /// <summary>
+        /// Number of the level that the score was generated in.
+        /// </summary>
+        public LevelNumber Lvl { get; private set; }
+
+        /// <summary>
+        /// Score value that the player achieved.
+        /// </summary>
+        public int Value { get; private set; }
+
+        /// <summary>
+        /// Creates a new player account score at the current date/time.
+        /// </summary>
+        /// <param name="value">Score value the player achieved.</param>
+        /// <param name="lvl">Level the player achieved the score on.</param>
+        /// <returns>
+        /// New player account score.
+        /// </returns>
+        public Score(
+            int value,
+            LevelNumber lvl
+        ) : this(value, lvl, DateTime.Now) { }
+
+        /// <summary>
+        /// Creates a new player account score.
+        /// </summary>
+        /// <param name="score">Score value the player achieved.</param>
+        /// <param name="level">Level the player achieved the score on.</param>
+        /// <param name="dt">Date/Time the player achieved the score.</param>
+        /// <returns>
+        /// New player account score.
+        /// </returns>
+        public Score(int score, LevelNumber level, DateTime dt)
+        {
+            // set date/time that score was achieved
+            DT = dt;
+
+            // set the level number that the player achieved the score for
+            Lvl = level;
+
+            // set score value that the player achieved
+            Value = score;
+        }
+    }
+
+    /// <summary>
+    /// Enumeration for the different screens that are implemented in the game.
+    /// </summary>
+    public enum Screen {
+        Quit, // quit and save data
+        Login, // used to logging in a player
+        Main, // used for showing the main menu
+        PlayMenu, // used for selecting which level to play
+        Scores, // used to display user and overall high scores
+        Settings, // used to display the settings
+        Lvl0, // game level 1
+        Lvl1, // game level 2
+        Lvl2, // game level 3
+        Lvl3, // game level 4
+        Lvl4, // game level 5
+        Lvl5, // game level 6
+        Lvl6, // game level 7
+        Lvl7, // game level 8
+        Lvl8, // game level 9
+        Lvl9, // game level 10
+    }
+
+    /// <summary>
+    /// Represents an individual sprite in the game when the player is in a
+    /// particular level.
+    /// </summary>
+    /// <remarks>
+    /// Fields + Properties
+    /// <list type="bullet">
+    ///     <item>- _window : <c>SplashKitSDK.Window</c></item>
+    ///     <item>+ Bmp : <c>SplashKitSDK.Bmp | null</c></item>
+    ///     <item>+ Pos : <c>SplashKitSDK.Point2D Pos</c></item>
+    ///     <item>+ Txt : <c>string | null</c></item>
+    /// </list>
+    /// 
+    /// Methods
+    /// <list type="bullet">
+    ///     <item>+ Draw() : <c>void</c></item>
+    ///     <item>+ Draw(vel_x, vel_y) : <c>void</c> &lt;&lt; virtual &gt;&gt;</item>
+    ///     <item>+ GetRectangle() : <c>SplashKitSDK.Rectangle</c></item>
+    ///     <item>+ Sprite(x, y, bitmap_txt, window) : <c>Sprite</c></item>
+    ///     <item>+ Update(vel_x, vel_y, reverse=false) : <c>void</c></item>
+    /// </list>
+    /// </remarks>
+    /// <see cref="Level"/>
+    /// <see cref="Platform"/>
+    /// <see cref="Player"/>
+    /// <see cref="SpriteText"/>
+    public abstract class Sprite
+    {
+        /// <summary>
+        /// Game window the sprite will be drawn on.
+        /// </summary>
+        private SplashKitSDK.Window _window;
+        
+        /// <summary>
+        /// Bitmap of the sprite (if it has a bitmap). Either the <c>Txt</c> or
+        /// this should be <c>null</c>, and the other should contain a value.
+        /// </summary>
+        public SplashKitSDK.Bitmap? Bmp { get; protected set; }
+
+        /// <summary>
+        /// Position of the sprite on the game window.
+        /// </summary>
+        public SplashKitSDK.Point2D Pos { get; private set; }
+
+        /// <summary>
+        /// Text to display (instead of a bitmap). Either the <c>Bmp</c> or
+        /// this should be <c>null</c>, and the other should contain a value.
+        /// </summary>
+        public string? Txt { get; private set; }
+
+        /// <summary>
+        /// Draws the sprite on the screen.
+        /// </summary>
+        public void Draw()
+        {
+            // if the bitmap exists - draw it
+            if (Bmp != null)
+            {
+                SplashKit.DrawBitmapOnWindow(
+                    _window,
+                    Bmp,
+                    Pos.X,
+                    Pos.Y
+                );
+            }
+
+            // if the text exists - draw it
+            else if (Txt != null)
+            {
+                SplashKit.DrawTextOnWindow(
+                    _window,
+                    Txt,
+                    Color.Black,
+                    "Arial",
+                    20,
+                    Pos.X - (Txt.Length * 4),
+                    Pos.Y - 7
+                );
+            }
+
+            // neither exists - raise error
+            else
+            {
+                throw new InvalidSpriteDrawException(
+                    "Sprite unable to be drawn"
+                );
+            }
+        }
+
+        /// <summary>
+        /// Draws the sprite on the screen with x and y velocities for
+        /// animation.
+        /// </summary>
+        /// <param name="vel_x">Velocity of the sprite in the X-Axis.</param>
+        /// <param name="vel_y">Velocity of the sprite in the Y-Axis.</param>
+        public virtual void Draw(double vel_x, double vel_y)
+        {
+            // default to just running the normal draw function
+            Draw();
+        }
+
+        /// <summary>
+        /// Gets a rectangle of the bounds of the sprite which can be used for
+        /// checking rectangle collisions and other constraints.
+        /// </summary>
+        /// <returns>
+        /// Rectangle of the bounding box of the current sprite.
+        /// </returns>
+        public SplashKitSDK.Rectangle GetRectangle()
+        {
+            // use bitmap if possible
+            if (Bmp != null)
+            {
+                return new SplashKitSDK.Rectangle(){
+                    X = Pos.X,
+                    Y = Pos.Y,
+                    Width = Bmp.Width,
+                    Height = Bmp.Height
+                };
+            }
+            
+            // unable to create a bounding box from text or other data, so
+            // raise error
+            throw new InvalidSpriteRectangleException(
+                "Unable to create a rectangle for this sprite"
+            );
+        }
+
+        /// <summary>
+        /// Creates a new sprite in the game window for a particular level.
+        /// </summary>
+        /// <param name="x">Starting X-Coordinate of the sprite.</param>
+        /// <param name="y">Starting Y-Coordinate of the sprite.</param>
+        /// <param name="bitmap_txt">
+        ///     Bitmap resource location (if starting with "Resources/images"),
+        ///     or text to display on the sprite.
+        /// </param>
+        /// <param name="window">Game window to display the sprite on.</param>
+        public Sprite(
+            float x,
+            float y,
+            string bitmap_txt,
+            Window window
+        )
+        {
+            // store game window
+            _window = window;
+
+            // set bitmap and text
+            if (bitmap_txt.StartsWith("Resources/images"))
+            {
+                Bmp = new Bitmap(
+                    bitmap_txt.Split('/').Last().Split('.')[0], // image name
+                    bitmap_txt // file directory + name
+                );
+                Txt = null;
+            }
+            else
+            {
+                Bmp = null;
+                Txt = bitmap_txt;
+            }
+
+            // set initial position
+            Pos = new Point2D()
+            {
+                X = x,
+                Y = y
+            };
+        }
+        
+        /// <summary>
+        /// Updates the position of the sprite in the game window.
+        /// </summary>
+        /// <param name="vel_x">Velocity of the sprite in the X-Axis.</param>
+        /// <param name="vel_y">Velocity of the sprite in the Y-Axis.</param>
+        /// <param name="reverse">
+        ///     Whether or not to reverse the provided direction. Defaults to
+        ///     <c>false</c>, meaning that the provided values will be used.
+        /// </param>
+        public void Update(double vel_x, double vel_y, bool reverse = false)
+        {
+            Pos = new SplashKitSDK.Point2D()
+            {
+                X = Pos.X + (vel_x * (reverse ? -1 : 1)),
+                Y = Pos.Y + (vel_y * (reverse? -1 : 1))
+            };
+        }
+    }
+    
+    /// <summary>
+    /// Represents a text element sprite within a game level.
+    /// </summary>
+    /// <remarks>
+    /// Fields + Properties
+    /// <list type="bullet">
+    ///     <item>+ Bmp : <c>SplashKitSDK.Bmp | null</c></item>
+    ///     <item>+ Pos : <c>SplashKitSDK.Point2D Pos</c></item>
+    ///     <item>+ Txt : <c>string | null</c></item>
+    /// </list>
+    /// 
+    /// Methods
+    /// <list type="bullet">
+    ///     <item>+ Draw() : <c>void</c></item>
+    ///     <item>+ Draw(vel_x, vel_y) : <c>void</c></item>
+    ///     <item>+ GetRectangle() : <c>SplashKitSDK.Rectangle</c></item>
+    ///     <item>+ SpriteText(window) : <c>SpriteText</c></item>
+    ///     <item>+ Update(vel_x, vel_y, reverse=false) : <c>void</c></item>
+    /// </list>
+    /// </remarks>
+    /// <see cref="Level"/>
+    /// <see cref="Sprite"/>
+    public class SpriteText : Sprite
+    {
+        /// <summary>
+        /// Creates a new sprite text element which can be used to display text
+        /// in a game level.
+        /// </summary>
+        /// <param name="x">Starting position X-Coordinate.</param>
+        /// <param name="y">Starting position Y-Coordinate.</param>
+        /// <param name="text">Text to display in the text element.</param>
+        /// <param name="window">Game window to display the text on.</param>
+        /// <returns></returns>
+        public SpriteText(
+            float x,
+            float y,
+            string text,
+            Window window
+        ) : base(x, y, text, window) { }
+    }
+
+    /// <summary>
     /// Contains base functionality that all UI elements implement.
     /// </summary>
     /// <remarks>
@@ -2841,7 +2842,7 @@ namespace _7_3_CustomProgramCode
         public override void Draw()
         {
             // lambda to draw bitmap
-            Func<SplashKitSDK.Bitmap, void> _DrawBitmap = (bmp) =>
+            Action<SplashKitSDK.Bitmap> _DrawBitmap = (bmp) =>
             {
                 SplashKit.DrawBitmapOnWindow(
                     _window,
@@ -3084,7 +3085,7 @@ namespace _7_3_CustomProgramCode
         public override void Draw()
         {
             // lambda to draw textbox background + border
-            Func<SplashKitSDK.Color, void> _DrawTextBox = (fill) =>
+            Action<SplashKitSDK.Color> _DrawTextBox = (fill) =>
             {
                 SplashKit.FillRectangleOnWindow(_window, fill, _rect);
                 SplashKit.DrawRectangleOnWindow(
@@ -3092,10 +3093,10 @@ namespace _7_3_CustomProgramCode
                     SplashKit.RGBColor(102, 102, 102),
                     _rect
                 );
-            }
+            };
 
             // lambda to draw textbox text
-            Func<string, double, double, bool> _DrawTextBoxText = (
+            Action<string, double, double, bool> _DrawTextBoxText = (
                 txt, // text to display
                 x, // x-coordinate to display at
                 y, // y-coordinate to display at
@@ -3105,13 +3106,13 @@ namespace _7_3_CustomProgramCode
                 SplashKit.DrawTextOnWindow(
                     _window,
                     txt,
-                    SplashKit.Color.Black,
+                    SplashKitSDK.Color.Black,
                     "Arial",
                     20,
                     x - (center ? (txt.Length * 4) : 0),
                     y - (center ? 7 : 10)
-                )
-            }
+                );
+            };
 
             // draw textbox background + border
             if (_selected)
