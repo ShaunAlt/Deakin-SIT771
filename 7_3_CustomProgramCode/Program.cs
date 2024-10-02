@@ -1513,6 +1513,24 @@ namespace _7_3_CustomProgramCode
     }
 
     /// <summary>
+    /// Enumeration for the different levels that can be played in the game.
+    /// </summary>
+    /// <see cref="Level"/>
+    public enum LevelNumber
+    {
+        L0,
+        L1,
+        L2,
+        L3,
+        L4,
+        L5,
+        L6,
+        L7,
+        L8,
+        L9,
+    }
+
+    /// <summary>
     /// Represents an individual platform within a game level.
     /// </summary>
     /// <remarks>
@@ -1622,7 +1640,7 @@ namespace _7_3_CustomProgramCode
     /// Enumeration for the different platforms that can be created in each
     /// game level.
     /// </summary>
-    /// <see cref="PlatformType"/>
+    /// <see cref="Platform"/>
     public enum PlatformType {
         Tiny,
         Tiny90,
@@ -2096,22 +2114,6 @@ namespace _7_3_CustomProgramCode
         ) : base(x, y, text, window) { }
     }
 
-    /* ************************************************************************
-     * Level Number Enumerator
-     * ***********************************************************************/
-    public enum LevelNumber
-    {
-        L0,
-        L1,
-        L2,
-        L3,
-        L4,
-        L5,
-        L6,
-        L7,
-        L8,
-        L9,
-    }
     public enum Screen {
         Quit, // quit and save data
         Login, // used to logging in a player
