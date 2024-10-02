@@ -39,7 +39,10 @@ namespace _7_3_CustomProgramCode
     /// <remarks>
     /// Fields + Properties
     /// <list type="bullet">
-    ///     <item>- _accounts : <c>List &lt; Account &gt; </c></item>
+    ///     <item>
+    ///         - _accounts : <c>List &lt; Account &gt; </c>
+    ///         &lt;&lt; static &gt;&gt;
+    ///     </item>
     ///     <item>+ Name : <c>string</c></item>
     ///     <item>+ Scores : <c>List &lt; Score &gt; </c></item>
     /// </list>
@@ -364,6 +367,24 @@ namespace _7_3_CustomProgramCode
             string message
         ) : base(message) { }
         public InvalidLevelNumberException(
+            string message,
+            System.Exception inner
+        ) : base(message, inner) { }
+    }
+
+    /// <summary>
+    /// Raised when the program encounters an invalid <c>PlatformType</c> enum
+    /// value.
+    /// </summary>
+    /// <see cref="Platform"/> 
+    /// <see cref="PlatformType"/>
+    public class InvalidPlatformTypeException : System.Exception
+    {
+        public InvalidPlatformTypeException() { }
+        public InvalidPlatformTypeException(
+            string message
+        ) : base(message) { }
+        public InvalidPlatformTypeException(
             string message,
             System.Exception inner
         ) : base(message, inner) { }
@@ -1452,6 +1473,127 @@ namespace _7_3_CustomProgramCode
     }
 
     /// <summary>
+    /// Represents an individual platform within a game level.
+    /// </summary>
+    /// <remarks>
+    /// Fields + Properties
+    /// <list type="bullet">
+    ///     <item>+ Bmp : <c>SplashKitSDK.Bmp | null</c></item>
+    ///     <item>+ Pos : <c>SplashKitSDK.Point2D Pos</c></item>
+    ///     <item>+ Txt : <c>string | null</c></item>
+    /// </list>
+    /// 
+    /// Methods
+    /// <list type="bullet">
+    ///     <item>+ Draw() : <c>void</c></item>
+    ///     <item>- GetName(type_) : <c>string</c> &lt;&lt; static &gt;&gt;</item>
+    ///     <item>+ GetRectangle() : <c>SplashKitSDK.Rectangle</c></item>
+    ///     <item>+ Platform(x, y, type_, window) : <c>Platform</c></item>
+    ///     <item>+ Update(vel_x, vel_y, reverse=false) : <c>void</c></item>
+    /// </list>
+    /// </remarks>
+    /// <see cref="Level"/>
+    /// <see cref="Platform"/>
+    /// <see cref="Sprite"/>
+    public class Platform : Sprite
+    {
+        /// <summary>
+        /// Creates a new platform in the game window for a particular level.
+        /// </summary>
+        /// <param name="x">Starting X-Coordinate of the platform.</param>
+        /// <param name="y">Starting Y-Coordinate of the platform.</param>
+        /// <param name="type_">Type of platform being created.</param>
+        /// <param name="window">
+        ///     Game window to display the platform on.
+        /// </param>
+        /// <returns></returns>
+        public Platform(
+                float x,
+                float y,
+                PlatformType type_,
+                Window window
+        ) : base(x, y, GetName(type_), window) { }
+
+        /// <summary>
+        /// Gets the name of the platform bitmap file from the given platform
+        /// type.
+        /// </summary>
+        /// <param name="type_">
+        ///     Type of platform to get the filename for.
+        /// </param>
+        /// <returns>
+        /// String containing the directory and filename of the bitmap for the
+        /// given platform.
+        /// </returns>
+        private static string GetName(PlatformType type_)
+        {
+            switch (type_)
+            {
+                case PlatformType.Tiny:
+                    return (
+                        "Resources/images/Platform v2/Platform - Tiny v2." 
+                        + "png"
+                    );
+                case PlatformType.Tiny90:
+                    return (
+                        "Resources/images/Platform v2/Platform - Tiny v2 90." 
+                        + "png"
+                    );
+                case PlatformType.Small:
+                    return (
+                        "Resources/images/Platform v2/Platform - Sml v2." 
+                        + "png"
+                    );
+                case PlatformType.Small90:
+                    return (
+                        "Resources/images/Platform v2/Platform - Sml v2 90." 
+                        + "png"
+                    );
+                case PlatformType.Medium:
+                    return (
+                        "Resources/images/Platform v2/Platform - Med v2." 
+                        + "png"
+                    );
+                case PlatformType.Medium90:
+                    return (
+                        "Resources/images/Platform v2/Platform - Med v2 90." 
+                        + "png"
+                    );
+                case PlatformType.Large:
+                    return (
+                        "Resources/images/Platform v2/Platform - Lrg v2." 
+                        + "png"
+                    );
+                case PlatformType.Large90:
+                    return (
+                        "Resources/images/Platform v2/Platform - Lrg v2 90." 
+                        + "png"
+                    );
+                default:
+                    throw new InvalidPlatformTypeException(
+                        $"Invalid platform type = {type_}"
+                    );
+            }
+        }
+    }
+
+    /// <summary>
+    /// Enumeration for the different platforms that can be created in each
+    /// game level.
+    /// </summary>
+    /// <see cref="PlatformType"/>
+    public enum PlatformType {
+        Tiny,
+        Tiny90,
+        Small,
+        Small90,
+        Medium,
+        Medium90,
+        Large,
+        Large90
+    }
+
+    /// <summary>
     /// Represents an individual sprite in the game when the player is in a
     /// particular level.
     /// </summary>
@@ -1627,61 +1769,7 @@ namespace _7_3_CustomProgramCode
             Pos.Y += (vel_y * (reverse ? -1 : 1));
         }
     }
-    public enum PlatformType {
-        Tiny,
-        Tiny90,
-        Small,
-        Small90,
-        Medium,
-        Medium90,
-        Large,
-        Large90
-    }
-
-    public class Platform : Sprite
-    {
-        public Rectangle collision_rect { get { 
-            return new SplashKitSDK.Rectangle()
-            {
-                X = pos.X,
-                Y = pos.Y,
-                Width = Bitmap.Width,
-                Height = Bitmap.Height
-            };
-        }}
-        public Platform(
-                float x,
-                float y,
-                PlatformType type_,
-                Window window
-        ) : base(x, y, GetName(type_), window)
-        { }
-        private static string GetName(PlatformType type_)
-        {
-            switch (type_)
-            {
-                case PlatformType.Tiny:
-                    return "Resources/images/Platform v2/Platform - Tiny v2.png";
-                case PlatformType.Tiny90:
-                    return "Resources/images/Platform v2/Platform - Tiny v2 90.png";
-                case PlatformType.Small:
-                    return "Resources/images/Platform v2/Platform - Sml v2.png";
-                case PlatformType.Small90:
-                    return "Resources/images/Platform v2/Platform - Sml v2 90.png";
-                case PlatformType.Medium:
-                    return "Resources/images/Platform v2/Platform - Med v2.png";
-                case PlatformType.Medium90:
-                    return "Resources/images/Platform v2/Platform - Med v2 90.png";
-                case PlatformType.Large:
-                    return "Resources/images/Platform v2/Platform - Lrg v2.png";
-                case PlatformType.Large90:
-                    return "Resources/images/Platform v2/Platform - Lrg v2 90.png";
-                default:
-                    throw new ArgumentException("Invalid platform type");
-            }
-        }
-    }
-
+    
     public class Player : Sprite
     {
         public Rectangle collision_rect { get { 
@@ -1722,11 +1810,11 @@ namespace _7_3_CustomProgramCode
             return SplashKit.BitmapRectangleCollision(
                 _bmps[2],
                 Pos,
-                other.collision_rect
+                other.GetRectangle()
             ) || SplashKit.BitmapRectangleCollision(
                 _bmps[0],
                 Pos,
-                other.collision_rect
+                other.GetRectangle()
             );
         }
         public bool CheckCollision(Goal other)
