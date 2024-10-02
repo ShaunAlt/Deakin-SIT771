@@ -172,10 +172,10 @@ namespace _7_3_CustomProgramCode
             foreach(Score score in Scores)
             {
                 if (
-                        (score.level == lvl) // if the required level
+                        (score.Lvl == lvl) // if the required level
                         && (
                             (bestscore == null) // first score
-                            || (score.score > bestscore.score) // new best
+                            || (score.Value > bestscore.Value) // new best
                         )
                 )
                 {
@@ -210,7 +210,7 @@ namespace _7_3_CustomProgramCode
             {
                 foreach (Score score in account.Scores)
                 {
-                    if (score.level == lvl)
+                    if (score.Lvl == lvl)
                     {
                         scores_all.Add(score);
                     }
@@ -218,7 +218,7 @@ namespace _7_3_CustomProgramCode
             }
 
             // sort the scores in descending order based on score
-            scores_sort = scores_all.OrderBy(s1 => -1 * s1.score).ToList();
+            scores_sort = scores_all.OrderBy(s1 => -1 * s1.Value).ToList();
 
             // get only the top scores
             for (int i = 0; i < num_max; i++)
@@ -1882,6 +1882,113 @@ namespace _7_3_CustomProgramCode
         }
     }
 
+
+    /// <summary>
+    /// Represents an single score that a player achieved in the game.
+    /// </summary>
+    /// <remarks>
+    /// Fields + Properties
+    /// <list type="bullet">
+    ///     <item>+ DT : <c>DateTime</c> &lt;&lt; private set &gt;&gt;</item>
+    ///     <item>+ Lvl : <c>LevelNumber</c> &lt;&lt; private set &gt;&gt;</item>
+    ///     <item>+ Value : <c>int</c> &lt;&lt; private set &gt;&gt;</item>
+    /// </list>
+    /// 
+    /// Methods
+    /// <list type="bullet">
+    ///     <item>+ Score(value, lvl) : <c>Score</c></item>
+    ///     <item>+ Score(value, lvl, dt) : <c>Score</c></item>
+    /// </list>
+    /// </remarks>
+    /// <see cref="Account"/>
+    /// <see cref="LevelNumber"/>
+    public class Score
+    {
+        /*
+        Individual Player Level Score
+        -
+        Represents an individual score that a player got for a particular
+        level.
+
+        Attributes / Fields
+        -
+        - _datetime : `DateTime`
+            - Date/Time that the score was generated.
+        - _level : `LevelNumber`
+            - Number of the level that the score was generated in.
+        - _score : `int`
+            - Score value that the player achieved.
+
+        Constants
+        -
+        None
+
+        Methods
+        -
+        - Score(score, level) : `Score`
+            - Public Constructor Method.
+            - Creates a new score object with the given score and level number.
+
+        Properties
+        -
+        - datetime : `DateTime`
+            - Date/Time that the score was generated.
+        - level : `LevelNumber`
+            - Number of the level that the score was generated in.
+        - score : `int`
+            - Score value that the player achieved.
+        */
+
+        /// <summary>
+        /// Date/Time that the score was generated.
+        /// </summary>
+        public DateTime DT { get; private set; }
+
+        /// <summary>
+        /// Number of the level that the score was generated in.
+        /// </summary>
+        public LevelNumber Lvl { get; private set; }
+
+        /// <summary>
+        /// Score value that the player achieved.
+        /// </summary>
+        public int Value { get; private set }
+
+        /// <summary>
+        /// Creates a new player account score at the current date/time.
+        /// </summary>
+        /// <param name="value">Score value the player achieved.</param>
+        /// <param name="lvl">Level the player achieved the score on.</param>
+        /// <returns>
+        /// New player account score.
+        /// </returns>
+        public Score(
+            int value,
+            LevelNumber lvl
+        ) : this(value, lvl, DateTime.Now) { }
+
+        /// <summary>
+        /// Creates a new player account score.
+        /// </summary>
+        /// <param name="score">Score value the player achieved.</param>
+        /// <param name="level">Level the player achieved the score on.</param>
+        /// <param name="dt">Date/Time the player achieved the score.</param>
+        /// <returns>
+        /// New player account score.
+        /// </returns>
+        public Score(int score, LevelNumber level, DateTime dt)
+        {
+            // set date/time that score was achieved
+            DT = datetime;
+
+            // set the level number that the player achieved the score for
+            Lvl = level;
+
+            // set score value that the player achieved
+            Value = score;
+        }
+    }
+
     /// <summary>
     /// Enumeration for the different screens that are implemented in the game.
     /// </summary>
@@ -2414,7 +2521,7 @@ namespace _7_3_CustomProgramCode
                     List<Score> hs_list = Account.GetScores(lvls[n]);
                     ui.Add(new UIText($"Level {n+1}", x_vals[j], y_vals[i] - 125, 240, 40, w));
                     ui.Add(new UIText("Your Best:", x_vals[j], y_vals[i] - 85, 240, 30, w));
-                    ui.Add(new UIText(hs != null ? $"{hs.score}" : "Not Set", x_vals[j], y_vals[i] - 65, 240, 30, w));
+                    ui.Add(new UIText(hs != null ? $"{hs.Value}" : "Not Set", x_vals[j], y_vals[i] - 65, 240, 30, w));
                 }
             }
 
@@ -2474,11 +2581,11 @@ namespace _7_3_CustomProgramCode
                     List<Score> hs_list = Account.GetScores(lvls[n]);
                     ui.Add(new UIText($"Level {n+1}", x_vals[j], y_vals[i] - 125, 240, 40, w));
                     ui.Add(new UIText("Your Best:", x_vals[j], y_vals[i] - 85, 240, 30, w));
-                    ui.Add(new UIText(hs != null ? $"{hs.score}" : "Not Set", x_vals[j], y_vals[i] - 65, 240, 30, w));
+                    ui.Add(new UIText(hs != null ? $"{hs.Value}" : "Not Set", x_vals[j], y_vals[i] - 65, 240, 30, w));
                     ui.Add(new UIText("High Scores:", x_vals[j], y_vals[i] - 20, 240, 30, w));
-                    ui.Add(new UIText(hs_list.Count >= 1 ? $"1st: {hs_list[0].score}" : "1st: Not Set", x_vals[j], y_vals[i] + 10, 240, 30, w));
-                    ui.Add(new UIText(hs_list.Count >= 2 ? $"2nd: {hs_list[1].score}" : "2nd: Not Set", x_vals[j], y_vals[i] + 40, 240, 30, w));
-                    ui.Add(new UIText(hs_list.Count >= 3 ? $"3rd: {hs_list[2].score}" : "3rd: Not Set", x_vals[j], y_vals[i] + 70, 240, 30, w));
+                    ui.Add(new UIText(hs_list.Count >= 1 ? $"1st: {hs_list[0].Value}" : "1st: Not Set", x_vals[j], y_vals[i] + 10, 240, 30, w));
+                    ui.Add(new UIText(hs_list.Count >= 2 ? $"2nd: {hs_list[1].Value}" : "2nd: Not Set", x_vals[j], y_vals[i] + 40, 240, 30, w));
+                    ui.Add(new UIText(hs_list.Count >= 3 ? $"3rd: {hs_list[2].Value}" : "3rd: Not Set", x_vals[j], y_vals[i] + 70, 240, 30, w));
                 }
             }
 
@@ -2540,79 +2647,6 @@ namespace _7_3_CustomProgramCode
         }
     }
     
-    /* ************************************************************************
-     * Individual Player Level Score
-     * ***********************************************************************/
-    public class Score
-    {
-        /*
-        Individual Player Level Score
-        -
-        Represents an individual score that a player got for a particular
-        level.
-
-        Attributes / Fields
-        -
-        - _datetime : `DateTime`
-            - Date/Time that the score was generated.
-        - _level : `LevelNumber`
-            - Number of the level that the score was generated in.
-        - _score : `int`
-            - Score value that the player achieved.
-
-        Constants
-        -
-        None
-
-        Methods
-        -
-        - Score(score, level) : `Score`
-            - Public Constructor Method.
-            - Creates a new score object with the given score and level number.
-
-        Properties
-        -
-        - datetime : `DateTime`
-            - Date/Time that the score was generated.
-        - level : `LevelNumber`
-            - Number of the level that the score was generated in.
-        - score : `int`
-            - Score value that the player achieved.
-        */
-
-        // **********
-        // Attributes
-        private DateTime _datetime;
-        private LevelNumber _level;
-        private int _score;
-
-        // **********
-        // Properties
-        public DateTime datetime { get { return _datetime; } }
-        public LevelNumber level { get { return _level; } }
-        public int score { get { return _score; } }
-
-        // ***********
-        // Constructor
-        public Score(int score, LevelNumber level)
-        {
-            // set date/time that score was achieved
-            _datetime = DateTime.Now;
-
-            // set the level number that the player achieved the score for
-            _level = level;
-
-            // set score value that the player achieved
-            _score = score;
-        }
-        public Score(int score, LevelNumber level, DateTime datetime)
-        {
-            _datetime = datetime;
-            _level = level;
-            _score = score;
-        }
-    }
-
     /* ************************************************************************
      * UI Parent
      * ***********************************************************************/
