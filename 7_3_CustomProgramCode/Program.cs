@@ -356,6 +356,45 @@ namespace _7_3_CustomProgramCode
     }
 
     /// <summary>
+    /// Represents a goal sprite within a game level.
+    /// </summary>
+    /// <remarks>
+    /// Fields + Properties
+    /// <list type="bullet">
+    ///     <item>+ Bmp : <c>SplashKitSDK.Bmp | null</c></item>
+    ///     <item>+ Pos : <c>SplashKitSDK.Point2D Pos</c></item>
+    ///     <item>+ Txt : <c>string | null</c></item>
+    /// </list>
+    /// 
+    /// Methods
+    /// <list type="bullet">
+    ///     <item>+ Draw() : <c>void</c></item>
+    ///     <item>+ GetRectangle() : <c>SplashKitSDK.Rectangle</c></item>
+    ///     <item>+ Goal(x, y, window) : <c>Goal</c></item>
+    ///     <item>+ Update(vel_x, vel_y, reverse=false) : <c>void</c></item>
+    /// </list>
+    /// </remarks>
+    /// <see cref="Level"/>
+    /// <see cref="Sprite"/>
+    public class Goal : Sprite
+    {
+        /// <summary>
+        /// Creates a new goal sprite for a game level.
+        /// </summary>
+        /// <param name="x">X-Coordinate of the goal starting position.</param>
+        /// <param name="y">Y-Coordinate of the goal starting position.</param>
+        /// <param name="window">Game window the goal is drawn on.</param>
+        /// <returns>
+        /// New Goal sprite at the specified starting position.
+        /// </returns>
+        public Goal(
+            float x,
+            float y,
+            Window window
+        ) : base(x, y, "Resources/images/Target2.png", window) { }
+    }
+
+    /// <summary>
     /// Raised when the program encounters an invalid <c>LevelNumber</c> enum
     /// value.
     /// </summary>
@@ -1896,18 +1935,6 @@ namespace _7_3_CustomProgramCode
                     }
                 }
             }
-        }
-    }
-
-    public class Goal : Sprite
-    {
-        public Goal(
-            float x,
-            float y,
-            Window window
-        ) : base(x, y, "Resources/images/Target2.png", window)
-        {
-
         }
     }
 
