@@ -1881,7 +1881,28 @@ namespace _7_3_CustomProgramCode
             Draw();
         }
     }
-    
+
+    /// <summary>
+    /// Enumeration for the different screens that are implemented in the game.
+    /// </summary>
+    public enum Screen {
+        Quit, // quit and save data
+        Login, // used to logging in a player
+        Main, // used for showing the main menu
+        PlayMenu, // used for selecting which level to play
+        Scores, // used to display user and overall high scores
+        Settings, // used to display the settings
+        Lvl0, // game level 1
+        Lvl1, // game level 2
+        Lvl2, // game level 3
+        Lvl3, // game level 4
+        Lvl4, // game level 5
+        Lvl5, // game level 6
+        Lvl6, // game level 7
+        Lvl7, // game level 8
+        Lvl8, // game level 9
+        Lvl9, // game level 10
+    }
 
     /// <summary>
     /// Represents an individual sprite in the game when the player is in a
@@ -2112,25 +2133,6 @@ namespace _7_3_CustomProgramCode
             string text,
             Window window
         ) : base(x, y, text, window) { }
-    }
-
-    public enum Screen {
-        Quit, // quit and save data
-        Login, // used to logging in a player
-        Main, // used for showing the main menu
-        PlayMenu, // used for selecting which level to play
-        Scores, // used to display user and overall high scores
-        Settings, // used to display the settings
-        Lvl0,
-        Lvl1,
-        Lvl2,
-        Lvl3,
-        Lvl4,
-        Lvl5,
-        Lvl6,
-        Lvl7,
-        Lvl8,
-        Lvl9,
     }
 
     public class Program
