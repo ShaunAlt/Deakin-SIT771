@@ -369,6 +369,7 @@ namespace _7_3_CustomProgramCode
     /// Methods
     /// <list type="bullet">
     ///     <item>+ Draw() : <c>void</c></item>
+    ///     <item>+ Draw(vel_x, vel_y) : <c>void</c></item>
     ///     <item>+ GetRectangle() : <c>SplashKitSDK.Rectangle</c></item>
     ///     <item>+ Goal(x, y, window) : <c>Goal</c></item>
     ///     <item>+ Update(vel_x, vel_y, reverse=false) : <c>void</c></item>
@@ -390,7 +391,7 @@ namespace _7_3_CustomProgramCode
         public Goal(
             float x,
             float y,
-            Window window
+            SplashKitSDK.Window window
         ) : base(x, y, "Resources/images/Target2.png", window) { }
     }
 
@@ -1525,6 +1526,7 @@ namespace _7_3_CustomProgramCode
     /// Methods
     /// <list type="bullet">
     ///     <item>+ Draw() : <c>void</c></item>
+    ///     <item>+ Draw(vel_x, vel_y) : <c>void</c></item>
     ///     <item>- GetName(type_) : <c>string</c> &lt;&lt; static &gt;&gt;</item>
     ///     <item>+ GetRectangle() : <c>SplashKitSDK.Rectangle</c></item>
     ///     <item>+ Platform(x, y, type_, window) : <c>Platform</c></item>
@@ -1550,7 +1552,7 @@ namespace _7_3_CustomProgramCode
                 float x,
                 float y,
                 PlatformType type_,
-                Window window
+                SplashKitSDK.Window window
         ) : base(x, y, GetName(type_), window) { }
 
         /// <summary>
@@ -1633,6 +1635,238 @@ namespace _7_3_CustomProgramCode
     }
 
     /// <summary>
+    /// Represents the player sprite within a game level.
+    /// </summary>
+    /// <remarks>
+    /// Fields + Properties
+    /// <list type="bullet">
+    ///     <item>- _bmps : <c>List &lt; SplashKitSDK.Bitmap &gt;</c></item>
+    ///     <item>- _anim_idx : <c>int</c></item>
+    ///     <item>- _anim_inc : <c>bool</c></item>
+    ///     <item>- _num_frames : <c>int</c></item>
+    ///     <item>+ Bmp : <c>SplashKitSDK.Bmp | null</c></item>
+    ///     <item>+ Pos : <c>SplashKitSDK.Point2D Pos</c></item>
+    ///     <item>+ Txt : <c>string | null</c></item>
+    /// </list>
+    /// 
+    /// Methods
+    /// <list type="bullet">
+    ///     <item>+ CheckCollision(other) : <c>bool</c></item> (Goal)
+    ///     <item>+ CheckCollision(other) : <c>bool</c></item> (Platform)
+    ///     <item>+ Draw() : <c>void</c></item>
+    ///     <item>+ Draw(vel_x, vel_y) : <c>void</c> &lt;&lt; override &gt;&gt;</item>
+    ///     <item>- GetName(type_) : <c>string</c> &lt;&lt; static &gt;&gt;</item>
+    ///     <item>+ GetRectangle() : <c>SplashKitSDK.Rectangle</c></item>
+    ///     <item>+ Player(window) : <c>Player</c></item>
+    ///     <item>+ Update(vel_x, vel_y, reverse=false) : <c>void</c></item>
+    /// </list>
+    /// </remarks>
+    /// <see cref="Goal"/>
+    /// <see cref="Level"/>
+    /// <see cref="Platform"/>
+    /// <see cref="Sprite"/>
+    public class Player : Sprite {
+        /// <summary>
+        /// Collection of bitmaps used for animating the player when they are
+        /// moving around in the screen.
+        /// </summary>
+        private List<SplashKitSDK.Bitmap> _bmps;
+
+        /// <summary>
+        /// Index (0-2 inclusive) of the bitmap that is currently being
+        /// displayed for the player on the screen.
+        /// </summary>
+        private int _anim_idx;
+
+        /// <summary>
+        /// Flag indicating if the next <c>_anim_idx</c> value should be an
+        /// increase or decrease from the previous value (allows for
+        /// oscillating between 0 and 2).
+        /// </summary>
+        private bool _anim_inc;
+
+        /// <summary>
+        /// Indicates the number of frames the current bitmap has been shown
+        /// for. Used to create the required timing for switching bitmaps for
+        /// the player animation.
+        /// </summary>
+        private int _num_frames;
+
+        /// <summary>
+        /// Creates a new player for a game level.
+        /// </summary>
+        /// <param name="window">Game window to draw the player on.</param>
+        /// <returns>
+        /// New player for the game level.
+        /// </returns>
+        public Player(
+            SplashKitSDK.Window window
+        ) : base(600, 400, "Resources/images/Player.png", window)
+        {
+            // initialize animation frames data
+            _anim_idx = 0;
+            _anim_inc = true;
+            _num_frames = 0;
+
+            // create list of bitmaps for animating the player
+            _bmps = new List<SplashKitSDK.Bitmap>()
+            {
+                new SplashKitSDK.Bitmap(
+                    "Player_l0",
+                    "Resources/images/Player v2/l0.png"
+                ),
+                new SplashKitSDK.Bitmap(
+                    "Player_l1",
+                    "Resources/images/Player v2/l1.png"
+                ),
+                new SplashKitSDK.Bitmap(
+                    "Player_l2",
+                    "Resources/images/Player v2/l2.png"
+                ),
+                new SplashKitSDK.Bitmap(
+                    "Player_r0",
+                    "Resources/images/Player v2/r0.png"
+                ),
+                new SplashKitSDK.Bitmap(
+                    "Player_r1",
+                    "Resources/images/Player v2/r1.png"
+                ),
+                new SplashKitSDK.Bitmap(
+                    "Player_r2",
+                    "Resources/images/Player v2/r2.png"
+                ),
+            };
+        }
+
+        /// <summary>
+        /// Checks if the player has collided with the given goal sprite.
+        /// </summary>
+        /// <param name="other">Goal sprite to check collision against.</param>
+        /// <returns>
+        /// Whether or not the player sprite collided with the goal sprite.
+        /// </returns>
+        public bool CheckCollision(Goal other)
+        {
+            // initialize as not collided
+            bool collision = false;
+
+            // check each animation frame of the player
+            foreach (SplashKitSDK.Bitmap bmp in _bmps)
+            {
+                // check collision with the goal sprite
+                if (SplashKit.BitmapCollision(bmp, Pos, other.Bmp, other.Pos))
+                {
+                    collision = true;
+                    break;
+                }
+            }
+
+            return collision;
+        }
+
+        /// <summary>
+        /// Checks if the player has collided with the given platform sprite.
+        /// </summary>
+        /// <param name="other">Platform to check collision against.</param>
+        /// <returns>
+        /// Whether or not the player sprite collided with the platform sprite.
+        /// </returns>
+        public bool CheckCollision(Platform other)
+        {
+            // initialize as not collided
+            bool collision = false;
+
+            // check each animation frame of the player
+            foreach (SplashKitSDK.Bitmap bmp in _bmps)
+            {
+                // check collision with the goal sprite
+                if (SplashKit.BitmapRectangleCollision(
+                    bmp,
+                    Pos,
+                    other.GetRectangle()
+                ))
+                {
+                    collision = true;
+                    break;
+                }
+            }
+
+            return collision;
+        }
+
+        /// <summary>
+        /// Draws the player on the screen with x and y velocities for
+        /// animation.
+        /// </summary>
+        /// <param name="vel_x">Velocity of the sprite in the X-Axis.</param>
+        /// <param name="vel_y">Velocity of the sprite in the Y-Axis.</param>
+        public override void Draw(double vel_x, double vel_y)
+        {
+            // update number of frames the current player bitmap has played for
+            _num_frames++;
+
+            // if jumping or falling - override animation
+            if (vel_y > 0) // jumping up - use l2 or r2
+            {
+                _anim_idx = 2;
+                _anim_inc = true;
+                _num_frames = 0;
+            }
+            else if (vel_y < 0) // falling down - use l0 or r0
+            {
+                _anim_idx = 0;
+                _anim_inc = false;
+                _num_frames = 0;
+            }
+
+            // set main bitmap based on direction
+            if (vel_x >= 0) // stationary or right
+            {
+                Bmp = _bmps[_anim_idx];
+            }
+            else // left
+            {
+                Bmp = _bmps[_anim_idx + 3];
+            }
+
+            // update animation bitmap
+            if ((_num_frames > 5) && (Math.Abs(vel_x) > 0.25))
+            {
+                // reset if the required number of frames have passed
+                _num_frames = 0;
+
+                // increase / decrease the animation bitmap index
+                if (_anim_inc) // increase
+                {
+                    _anim_idx++;
+
+                    // if at the limit, reverse to start decreasing
+                    if (_anim_idx >= 2)
+                    {
+                        _anim_inc = false;
+                        _anim_idx = 2;
+                    }
+                }
+                else // decrease
+                {
+                    _anim_idx--;
+
+                    // if at the limit, reverse to start increasing
+                    if (_anim_idx <= 0)
+                    {
+                        _anim_inc = true;
+                        _anim_idx = 0;
+                    }
+                }
+            }
+
+            // draw the player sprite
+            Draw();
+        }
+    }
+    
+
+    /// <summary>
     /// Represents an individual sprite in the game when the player is in a
     /// particular level.
     /// </summary>
@@ -1648,6 +1882,7 @@ namespace _7_3_CustomProgramCode
     /// Methods
     /// <list type="bullet">
     ///     <item>+ Draw() : <c>void</c></item>
+    ///     <item>+ Draw(vel_x, vel_y) : <c>void</c> &lt;&lt; virtual &gt;&gt;</item>
     ///     <item>+ GetRectangle() : <c>SplashKitSDK.Rectangle</c></item>
     ///     <item>+ Sprite(x, y, bitmap_txt, window) : <c>Sprite</c></item>
     ///     <item>+ Update(vel_x, vel_y, reverse=false) : <c>void</c></item>
@@ -1668,7 +1903,7 @@ namespace _7_3_CustomProgramCode
         /// Bitmap of the sprite (if it has a bitmap). Either the <c>Txt</c> or
         /// this should be <c>null</c>, and the other should contain a value.
         /// </summary>
-        public SplashKitSDK.Bitmap? Bmp { get; private set; }
+        public SplashKitSDK.Bitmap? Bmp { get; protected set; }
 
         /// <summary>
         /// Position of the sprite on the game window.
@@ -1718,6 +1953,18 @@ namespace _7_3_CustomProgramCode
                     "Sprite unable to be drawn"
                 );
             }
+        }
+
+        /// <summary>
+        /// Draws the sprite on the screen with x and y velocities for
+        /// animation.
+        /// </summary>
+        /// <param name="vel_x">Velocity of the sprite in the X-Axis.</param>
+        /// <param name="vel_y">Velocity of the sprite in the Y-Axis.</param>
+        public virtual void Draw(double vel_x, double vel_y)
+        {
+            // default to just running the normal draw function
+            Draw();
         }
 
         /// <summary>
@@ -1809,135 +2056,6 @@ namespace _7_3_CustomProgramCode
         }
     }
     
-    public class Player : Sprite
-    {
-        public Rectangle collision_rect { get { 
-            return new SplashKitSDK.Rectangle()
-            {
-                X = pos.X,
-                Y = pos.Y,
-                Width = _bitmap.Width,
-                Height = _bitmap.Height
-            };
-        }}
-        private List<Bitmap> _bmps;
-        private int _anim_counter;
-        private int _anim_counter_frames;
-        private bool _anim_counter_inc;
-        public Player(
-            float x,
-            float y,
-            Window window
-        ) : base(x, y, "Resources/images/Player.png", window)
-        {
-            _anim_counter = 0;
-            _anim_counter_inc = true;
-            _anim_counter_frames = 0;
-            _bmps = new List<Bitmap>()
-            {
-                new Bitmap("Player_l0", "Resources/images/Player v2/l0.png"),
-                new Bitmap("Player_l1", "Resources/images/Player v2/l1.png"),
-                new Bitmap("Player_l2", "Resources/images/Player v2/l2.png"),
-                new Bitmap("Player_r0", "Resources/images/Player v2/r0.png"),
-                new Bitmap("Player_r1", "Resources/images/Player v2/r1.png"),
-                new Bitmap("Player_r2", "Resources/images/Player v2/r2.png"),
-            };
-        }
-        public bool CheckCollision(Platform other)
-        {
-            // return collision_rect.IntersectsWith(other.collision_rect);
-            return SplashKit.BitmapRectangleCollision(
-                _bmps[2],
-                Pos,
-                other.GetRectangle()
-            ) || SplashKit.BitmapRectangleCollision(
-                _bmps[0],
-                Pos,
-                other.GetRectangle()
-            );
-        }
-        public bool CheckCollision(Goal other)
-        {
-            return SplashKit.BitmapCollision(
-                _bmps[2],
-                Pos,
-                other.Bmp,
-                other.Pos
-            ) || SplashKit.BitmapCollision(
-                _bmps[0],
-                Pos,
-                other.Bmp,
-                other.Pos
-            );
-        }
-        public void DrawPlayer(
-                double vel_x,
-                double vel_y
-        )
-        {
-            // update number of frames the current player animation has played
-            //  for
-            _anim_counter_frames++;
-
-            if (vel_y > 0) // jumping up - use l0 or r0
-            {
-                _anim_counter = 2;
-                _anim_counter_inc = true;
-                _anim_counter_frames = 0;
-            }
-            else if (vel_y < 0) // falling down - use l2 or r2
-            {
-                _anim_counter = 0;
-                _anim_counter_inc = false;
-                _anim_counter_frames = 0;
-            }
-
-            // draw based on direction
-            if (vel_x >= 0) // stationary or right
-            {
-                SplashKit.DrawBitmapOnWindow(
-                    _window,
-                    _bmps[_anim_counter],
-                    Pos.X,
-                    Pos.Y
-                );
-            }
-            else // left
-            {
-                SplashKit.DrawBitmapOnWindow(
-                    _window,
-                    _bmps[_anim_counter + 3],
-                    Pos.X,
-                    Pos.Y
-                );
-            }
-
-            // update animation counter
-            if (_anim_counter_frames > 5 && Math.Abs(vel_x) > 0.25)
-            {
-                _anim_counter_frames = 0;
-                if (_anim_counter_inc)
-                {
-                    _anim_counter++;
-                    if (_anim_counter >= 2)
-                    {
-                        _anim_counter_inc = false;
-                        _anim_counter = 2;
-                    }
-                }
-                else
-                {
-                    _anim_counter--;
-                    if (_anim_counter <= 0)
-                    {
-                        _anim_counter_inc = true;
-                        _anim_counter = 0;
-                    }
-                }
-            }
-        }
-    }
-
     public class SpriteText : Sprite
     {
         public SpriteText(
