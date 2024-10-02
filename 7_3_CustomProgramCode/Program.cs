@@ -360,8 +360,44 @@ namespace _7_3_CustomProgramCode
     public class InvalidLevelNumberException : System.Exception
     {
         public InvalidLevelNumberException() { }
-        public InvalidLevelNumberException(string message) : base(message) { }
         public InvalidLevelNumberException(
+            string message
+        ) : base(message) { }
+        public InvalidLevelNumberException(
+            string message,
+            System.Exception inner
+        ) : base(message, inner) { }
+    }
+
+    /// <summary>
+    /// Raised when a sprite is unable to be drawn due to invalid bitmap and
+    /// text data.
+    /// </summary>
+    /// <see cref="Sprite"/>
+    public class InvalidSpriteDrawException : System.Exception
+    {
+        public InvalidSpriteDrawException() { }
+        public InvalidSpriteDrawException(
+            string message
+        ) : base(message) { }
+        public InvalidSpriteDrawException(
+            string message,
+            System.Exception inner
+        ) : base(message, inner) { }
+    }
+
+    /// <summary>
+    /// Raised when a sprite is unable to create a bounding rectangle for
+    /// itself.
+    /// </summary>
+    /// <see cref="Sprite"/>
+    public class InvalidSpriteRectangleException : System.Exception
+    {
+        public InvalidSpriteRectangleException() { }
+        public InvalidSpriteRectangleException(
+            string message
+        ) : base(message) { }
+        public InvalidSpriteRectangleException(
             string message,
             System.Exception inner
         ) : base(message, inner) { }
@@ -1415,78 +1451,180 @@ namespace _7_3_CustomProgramCode
         }
     }
 
+    /// <summary>
+    /// Represents an individual sprite in the game when the player is in a
+    /// particular level.
+    /// </summary>
+    /// <remarks>
+    /// Fields + Properties
+    /// <list type="bullet">
+    ///     <item>- _window : <c>SplashKitSDK.Window</c></item>
+    ///     <item>+ Bmp : <c>SplashKitSDK.Bmp | null</c></item>
+    ///     <item>+ Pos : <c>SplashKitSDK.Point2D Pos</c></item>
+    ///     <item>+ Txt : <c>string | null</c></item>
+    /// </list>
+    /// 
+    /// Methods
+    /// <list type="bullet">
+    ///     <item>+ Draw() : <c>void</c></item>
+    ///     <item>+ GetRectangle() : <c>SplashKitSDK.Rectangle</c></item>
+    ///     <item>+ Sprite(x, y, bitmap_txt, window) : <c>Sprite</c></item>
+    ///     <item>+ Update(vel_x, vel_y, reverse=false) : <c>void</c></item>
+    /// </list>
+    /// </remarks>
+    /// <see cref="Level"/>
+    /// <see cref="Platform"/>
+    /// <see cref="Player"/>
+    /// <see cref="SpriteText"/>
     public abstract class Sprite
     {
-        protected Bitmap? _bitmap;
-        protected Point2D _pos;
-        protected string? _txt;
-        protected Window _window;
-        public Bitmap? bitmap { get { return _bitmap; } }
-        public string? txt { get { return _txt; } }
-        public Point2D pos { get { return _pos; } }
-        public double height { get { if (_bitmap == null) { return 0; } else { return _bitmap.Height; } } }
-        public double width { get { if (_bitmap == null) { return 0; } else { return _bitmap.Width; } } }
-        public Sprite(
-            float x,
-            float y,
-            string bitmap_name,
-            Window window
-        )
-        {
-            _window = window;
-            if (bitmap_name.StartsWith("Resources/images"))
-            {
-                _bitmap = new Bitmap(
-                    bitmap_name.Split('/').Last().Split('.')[0], // image name
-                    bitmap_name // file directory + name
-                );
-            }
-            else { _txt = bitmap_name; }
-            _pos = new Point2D(){ X = x, Y = y };
-        }
-        // public bool CheckCollision(Sprite other)
-        // {
-        //     if ((_bitmap == null) || (other.bitmap == null)) { return false; }
-        //     return SplashKit.BitmapCollision(
-        //         _bitmap,
-        //         _pos,
-        //         other.bitmap,
-        //         other.pos
-        //     );
-        // }
+        /// <summary>
+        /// Game window the sprite will be drawn on.
+        /// </summary>
+        private SplashKitSDK.Window _window;
+        
+        /// <summary>
+        /// Bitmap of the sprite (if it has a bitmap). Either the <c>Txt</c> or
+        /// this should be <c>null</c>, and the other should contain a value.
+        /// </summary>
+        public SplashKitSDK.Bitmap? Bmp { get; private set; }
+
+        /// <summary>
+        /// Position of the sprite on the game window.
+        /// </summary>
+        public SplashKitSDK.Point2D Pos { get; private set; }
+
+        /// <summary>
+        /// Text to display (instead of a bitmap). Either the <c>Bmp</c> or
+        /// this should be <c>null</c>, and the other should contain a value.
+        /// </summary>
+        public string? Txt { get; private set; }
+
+        /// <summary>
+        /// Draws the sprite on the screen.
+        /// </summary>
         public void Draw()
         {
-            if (_bitmap != null)
+            // if the bitmap exists - draw it
+            if (Bmp != null)
             {
                 SplashKit.DrawBitmapOnWindow(
                     _window,
-                    _bitmap,
-                    _pos.X,
-                    _pos.Y
+                    Bmp,
+                    Pos.X,
+                    Pos.Y
                 );
             }
-            else if (_txt != null)
+
+            // if the text exists - draw it
+            else if (Txt != null)
             {
                 SplashKit.DrawTextOnWindow(
                     _window,
-                    _txt,
+                    Txt,
                     Color.Black,
                     "Arial",
                     20,
-                    _pos.X - (_txt.Length * 4),
-                    _pos.Y - 7
+                    Pos.X - (Txt.Length * 4),
+                    Pos.Y - 7
+                );
+            }
+
+            // neither exists - raise error
+            else
+            {
+                throw new InvalidSpriteDrawException(
+                    "Sprite unable to be drawn"
                 );
             }
         }
-        public virtual void Update(double delta_x, double delta_y, bool reverse = false)
+
+        /// <summary>
+        /// Gets a rectangle of the bounds of the sprite which can be used for
+        /// checking rectangle collisions and other constraints.
+        /// </summary>
+        /// <returns>
+        /// Rectangle of the bounding box of the current sprite.
+        /// </returns>
+        public SplashKitSDK.Rectangle GetRectangle()
         {
-            _pos.X += (delta_x * (reverse ? -1 : 1));
-            _pos.Y += (delta_y * (reverse ? -1 : 1));
+            // use bitmap if possible
+            if (Bmp != null)
+            {
+                return new SplashKitSDK.Rectangle(
+                    Pos.X,
+                    Pos.Y,
+                    Bmp.Width,
+                    Bmp.Height
+                );
+            }
+            
+            // unable to create a bounding box from text or other data, so
+            // raise error
+            throw new InvalidSpriteRectangleException(
+                "Unable to create a rectangle for this sprite"
+            );
         }
-        public virtual void Update(Vector2D delta, bool reverse = false)
+
+        /// <summary>
+        /// Creates a new sprite in the game window for a particular level.
+        /// </summary>
+        /// <param name="x">Starting X-Coordinate of the sprite.</param>
+        /// <param name="y">Starting Y-Coordinate of the sprite.</param>
+        /// <param name="bitmap_txt">
+        ///     Bitmap resource location (if starting with "Resources/images"),
+        ///     or text to display on the sprite.
+        /// </param>
+        /// <param name="window">Game window to display the sprite on.</param>
+        public Sprite(
+            float x,
+            float y,
+            string bitmap_txt,
+            Window window
+        )
         {
-            _pos.X += (delta.X * (reverse ? -1 : 1));
-            _pos.Y += (delta.Y * (reverse ? -1 : 1));
+            // store game window
+            _window = window;
+
+            // set bitmap and text
+            if (bitmap_txt.StartsWith("Resources/images"))
+            {
+                Bmp = new Bitmap(
+                    bitmap_txt.Split('/').Last().Split('.')[0], // image name
+                    bitmap_txt // file directory + name
+                );
+                Txt = null;
+            }
+            else
+            {
+                Bmp = null;
+                Txt = bitmap_txt;
+            }
+
+            // set initial position
+            Pos = new Point2D()
+            {
+                X = x,
+                Y = y
+            };
+        }
+        
+        /// <summary>
+        /// Updates the position of the sprite in the game window.
+        /// </summary>
+        /// <param name="vel_x">Velocity of the sprite in the X-Axis.</param>
+        /// <param name="vel_y">Velocity of the sprite in the Y-Axis.</param>
+        /// <param name="reverse">
+        ///     Whether or not to reverse the provided direction. Defaults to
+        ///     <c>false</c>, meaning that the provided values will be used.
+        /// </param>
+        public void Update(double vel_x, double vel_y, bool reverse = false)
+        {
+            // update x-axis position
+            Pos.X += (vel_x * (reverse ? -1 : 1));
+
+            // update y-axis position
+            Pos.Y += (vel_y * (reverse ? -1 : 1));
         }
     }
     public enum PlatformType {
@@ -1507,8 +1645,8 @@ namespace _7_3_CustomProgramCode
             {
                 X = pos.X,
                 Y = pos.Y,
-                Width = _bitmap.Width,
-                Height = _bitmap.Height
+                Width = Bitmap.Width,
+                Height = Bitmap.Height
             };
         }}
         public Platform(
@@ -1583,11 +1721,11 @@ namespace _7_3_CustomProgramCode
             // return collision_rect.IntersectsWith(other.collision_rect);
             return SplashKit.BitmapRectangleCollision(
                 _bmps[2],
-                _pos,
+                Pos,
                 other.collision_rect
             ) || SplashKit.BitmapRectangleCollision(
                 _bmps[0],
-                _pos,
+                Pos,
                 other.collision_rect
             );
         }
@@ -1595,14 +1733,14 @@ namespace _7_3_CustomProgramCode
         {
             return SplashKit.BitmapCollision(
                 _bmps[2],
-                _pos,
-                other.bitmap,
-                other.pos
+                Pos,
+                other.Bmp,
+                other.Pos
             ) || SplashKit.BitmapCollision(
                 _bmps[0],
-                _pos,
-                other.bitmap,
-                other.pos
+                Pos,
+                other.Bmp,
+                other.Pos
             );
         }
         public void DrawPlayer(
@@ -1633,8 +1771,8 @@ namespace _7_3_CustomProgramCode
                 SplashKit.DrawBitmapOnWindow(
                     _window,
                     _bmps[_anim_counter],
-                    _pos.X,
-                    _pos.Y
+                    Pos.X,
+                    Pos.Y
                 );
             }
             else // left
@@ -1642,8 +1780,8 @@ namespace _7_3_CustomProgramCode
                 SplashKit.DrawBitmapOnWindow(
                     _window,
                     _bmps[_anim_counter + 3],
-                    _pos.X,
-                    _pos.Y
+                    Pos.X,
+                    Pos.Y
                 );
             }
 
