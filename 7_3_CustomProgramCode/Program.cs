@@ -2443,9 +2443,9 @@ namespace _7_3_CustomProgramCode
                 }
 
                 // process button click
-                if (b_login.Clicked() || t1.submitted) {
-                    if (string.IsNullOrEmpty(t1.data)) { t1.Reset(); }
-                    else { return Account.GetAccount(t1.data); }
+                if (b_login.Clicked() || t1.Submitted) {
+                    if (string.IsNullOrEmpty(t1.Data)) { t1.Reset(); }
+                    else { return Account.GetAccount(t1.Data); }
                 }
                 if (b_exit.Clicked()) { return null; }
 
@@ -2682,7 +2682,7 @@ namespace _7_3_CustomProgramCode
     ///     <item>+ Draw() : <c>void</c> &lt;&lt; abstract &gt;&gt;</item>
     ///     <item>+ MouseOver() : <c>bool</c></item>
     ///     <item>+ UIBase(label, x, y, width, height, window) : <c>UIBase</c></item>
-    ///     <item>+ Update() : <c>bool</c> &lt;&lt; virtual &gt;&gt;</item>
+    ///     <item>+ Update() : <c>void</c> &lt;&lt; virtual &gt;&gt;</item>
     /// </list>
     /// </remarks>
     /// <see cref="UIButton"/>
@@ -2816,7 +2816,7 @@ namespace _7_3_CustomProgramCode
     ///     <item>- GetBitmapDirectory(type_) : <c>string</c> &lt;&lt; static &gt;&gt;</item>
     ///     <item>+ MouseOver() : <c>bool</c></item>
     ///     <item>+ UIButton(type_, x, y, window) : <c>UIButton</c></item>
-    ///     <item>+ Update() : <c>bool</c> &lt;&lt; virtual &gt;&gt;</item>
+    ///     <item>+ Update() : <c>void</c> &lt;&lt; virtual &gt;&gt;</item>
     /// </list>
     /// </remarks>
     /// <see cref="UIBase"/>
@@ -2973,13 +2973,11 @@ namespace _7_3_CustomProgramCode
     }
 
     /// <summary>
-    /// Used to create a button in the ui that can be interacted with.
+    /// Used to create a text element in the ui that can be displayed.
     /// </summary>
     /// <remarks>
     /// Fields + Properties
     /// <list type="bullet">
-    ///     <item>- _dark : <c>SplashKitSDK.Bitmap</c></item>
-    ///     <item>- _light : <c>SplashKitSDK.Bitmap</c></item>
     ///     <item># _label : <c>string</c></item>
     ///     <item># _rect : <c>SplashKitSDK.Rectangle</c></item>
     ///     <item># _window : <c>SplashKitSDK.Window</c></item>
@@ -2992,7 +2990,7 @@ namespace _7_3_CustomProgramCode
     ///     <item>+ Draw() : <c>void</c> &lt;&lt; override &gt;&gt;</item>
     ///     <item>+ MouseOver() : <c>bool</c></item>
     ///     <item>+ UIText(label, x, y, width, height, window) : <c>UIText</c></item>
-    ///     <item>+ Update() : <c>bool</c> &lt;&lt; virtual &gt;&gt;</item>
+    ///     <item>+ Update() : <c>void</c> &lt;&lt; virtual &gt;&gt;</item>
     /// </list>
     /// </remarks>
     /// <see cref="UIBase"/>
@@ -3037,199 +3035,218 @@ namespace _7_3_CustomProgramCode
         ) : base(label, x, y, width, height, window) { }
     }
 
-    /* ************************************************************************
-     * UI Textbox
-     * ***********************************************************************/
+    /// <summary>
+    /// Used to create a textbox input in the ui that can be interacted with.
+    /// </summary>
+    /// <remarks>
+    /// Fields + Properties
+    /// <list type="bullet">
+    ///     <item>- _selected : <c>bool</c></item>
+    ///     <item># _label : <c>string</c></item>
+    ///     <item># _rect : <c>SplashKitSDK.Rectangle</c></item>
+    ///     <item># _window : <c>SplashKitSDK.Window</c></item>
+    ///     <item>+ Data : <c>string</c> &lt;&lt; private set &gt;&gt;</item>
+    ///     <item>+ Pos : <c>SplashKitSDK.Point2D</c> &lt;&lt; readonly &gt;&gt;</item>
+    ///     <item>+ Submitted : <c>bool</c> &lt;&lt; private set &gt;&gt;</item>
+    /// </list>
+    /// 
+    /// Methods
+    /// <list type="bullet">
+    ///     <item>+ Clicked() : <c>bool</c></item>
+    ///     <item>+ Draw() : <c>void</c> &lt;&lt; override &gt;&gt;</item>
+    ///     <item>+ MouseOver() : <c>bool</c></item>
+    ///     <item>+ Reset() : <c>void</c></item>
+    ///     <item>+ UITextBox(label, x, y, width, height, window) : <c>UITextBox</c></item>
+    ///     <item>+ Update() : <c>void</c> &lt;&lt; override &gt;&gt;</item>
+    /// </list>
+    /// </remarks>
+    /// <see cref="UIBase"/>
     public class UITextBox : UIBase
     {
-        /*
-        UI Textbox
-        -
-        Represents an individual textbox in the user interface.
+        /// <summary>
+        /// Whether or not the textbox is currently selected.
+        /// </summary>
+        private bool _selected;
 
-        Attributes / Fields
-        -
-        - _data : `string`
-            - Data entered into the textbox.
-        - _placeholder : `string`
-            - Placeholder text shown when nothing has been entered into the
-                textbox.
-        - _selected : `bool`
-            - Whether or not the textbox has been selected.
+        /// <summary>
+        /// Data entered into the textbox.
+        /// </summary>
+        public string Data { get; private set; }
 
-        Constants
-        -
+        /// <summary>
+        /// Whether or not the textbox has been submitted.
+        /// </summary>
+        public bool Submitted { get; private set; }
 
-        Methods
-        -
-        - Draw() : `void`
-            - Public Override Method.
-            - Draws the user interface textbox to the screen.
-        - UITextBox(...) : `UITextBox`
-            - Public Constructor Method.
-            - Creates a new user interface textbox.
-        - Update() : `void`
-            - Public Override Method.
-            - Updates the state of the textbox.
+        /// <summary>
+        /// Draw the textbox to the window.
+        /// </summary>
+        public override void Draw()
+        {
+            // lambda to draw textbox background + border
+            Func<SplashKitSDK.Color, void> _DrawTextBox = (fill) =>
+            {
+                SplashKit.FillRectangleOnWindow(_window, fill, _rect);
+                SplashKit.DrawRectangleOnWindow(
+                    _window,
+                    SplashKit.RGBColor(102, 102, 102),
+                    _rect
+                );
+            }
 
-        Properties
-        -
-        - data : `string`
-            - Data entered into the textbox.
-        */
+            // lambda to draw textbox text
+            Func<string, double, double, bool> _DrawTextBoxText = (
+                txt, // text to display
+                x, // x-coordinate to display at
+                y, // y-coordinate to display at
+                center // whether or not to center-align the text
+            ) =>
+            {
+                SplashKit.DrawTextOnWindow(
+                    _window,
+                    txt,
+                    SplashKit.Color.Black,
+                    "Arial",
+                    20,
+                    x - (center ? (txt.Length * 4) : 0),
+                    y - (center ? 7 : 10)
+                )
+            }
 
-        // **********
-        // Attributes
-        protected string _data;
-        protected string _placeholder;
-        protected bool _selected;
-        protected bool _submitted;
-        private SplashKitSDK.Color COL_TEXT = SplashKit.RGBColor(0, 0, 0);
-        private SplashKitSDK.Color COL_NORMAL_FILL = SplashKit.RGBColor(204, 204, 204);
-        private SplashKitSDK.Color COL_SELECTED_FILL = SplashKit.RGBColor(255, 255, 255);
-        private SplashKitSDK.Color COL_BORDER = SplashKit.RGBColor(102, 102, 102);
+            // draw textbox background + border
+            if (_selected)
+            {
+                _DrawTextBox(SplashKitSDK.Color.White);
+            }
+            else
+            {
+                _DrawTextBox(SplashKit.RGBColor(204, 204, 204));
+            }
 
-        // Properties
-        public string data { get { return _data; } }
-        public bool submitted { get { return _submitted; } }
+            // draw label text
+            _DrawTextBoxText(_label, _rect.X, _rect.Y, false);
 
+            // draw data text
+            if (_selected)
+            {
+                _DrawTextBoxText(
+                    Data + SplashKit.TextInput(),
+                    Pos.X,
+                    Pos.Y,
+                    true
+                );
+            }
+            else
+            {
+                _DrawTextBoxText(
+                    Data,
+                    Pos.X,
+                    Pos.Y,
+                    true
+                );
+            }
+        }
+
+        /// <summary>
+        /// Resets the textbox to its initial state.
+        /// </summary>
+        public void Reset()
+        {
+            Data = "";
+            Submitted = false;
+        }
+
+        /// <summary>
+        /// Creates a new ui textbox input.
+        /// </summary>
+        /// <param name="label">Label to place above the textbox.</param>
+        /// <param name="x">X-Coordinate of the textbox.</param>
+        /// <param name="y">Y-Coordinate of the textbox.</param>
+        /// <param name="width">Width of the textbox.</param>
+        /// <param name="height">Height of the textbox.</param>
+        /// <param name="window">Window to display the textbox on.</param>
+        /// <returns>
+        /// New ui textbox input.
+        /// </returns>
         public UITextBox(
                 string label,
                 double x,
                 double y,
                 double width,
                 double height,
-                SplashKitSDK.Window window,
-                string data = "",
-                string placeholder = ""
+                SplashKitSDK.Window window
         ) : base(label, x, y, width, height, window)
         {
-            _data = data;
-            _placeholder = placeholder;
+            // initialize selection state of the textbox
             _selected = false;
-            _submitted = false;
+
+            // initialize data text
+            Data = "";
+
+            // initialize submission flag
+            Submitted = false;
         }
 
-        // Draw UI Element
-        public override void Draw()
-        {
-            // local function used for draw fill + border of the button
-            void DrawRectangle(
-                    SplashKitSDK.Color fill,
-                    SplashKitSDK.Color border
-            )
-            {
-                SplashKit.FillRectangleOnWindow(_window, fill, _rect);
-                SplashKit.DrawRectangleOnWindow(_window, border, _rect);
-            }
-
-            // draw button fill + border
-            if (_selected)
-            {
-                DrawRectangle(COL_SELECTED_FILL, COL_BORDER);
-            }
-            else
-            {
-                DrawRectangle(COL_NORMAL_FILL, COL_BORDER);
-            }
-
-            // draw label text
-            SplashKit.DrawTextOnWindow(
-                _window,
-                _label,
-                COL_TEXT,
-                "Arial",
-                20,
-                _rect.X,
-                _rect.Y - 10
-            );
-
-            // draw data text
-            if (_selected)
-            {
-                SplashKit.DrawTextOnWindow(
-                    _window,
-                    _data + SplashKit.TextInput(),
-                    COL_TEXT,
-                    "Arial",
-                    20,
-                    Pos.X - ((_data.Length + SplashKit.TextInput().Length) * 4),
-                    Pos.Y - 7
-                );
-            }
-            else
-            {
-                SplashKit.DrawTextOnWindow(
-                    _window,
-                    _data,
-                    COL_TEXT,
-                    "Arial",
-                    20,
-                    Pos.X - (_data.Length * 4),
-                    Pos.Y - 7
-                );
-            }
-        }
-
-        public void Reset()
-        {
-            _data = "";
-        }
-
-        // Update
+        /// <summary>
+        /// Updates the data, selection, and submission status of the textbox
+        /// based on <c>SplashKit</c> events.
+        /// </summary>
         public override void Update()
         {
-            // update selected status
+            // update selection status + start/stop reading text on left mouse
+            // button click
             if (SplashKit.MouseClicked(SplashKitSDK.MouseButton.LeftButton))
             {
+                // set to selected if required
                 if (
-                        (MouseOver())
-                        && (!_selected)
+                        (MouseOver()) // this ui textbox was clicked
+                        && (!_selected) // not currently selected
                 ) {
+                    // start reading the text from SplashKit
                     SplashKit.StartReadingText(_rect);
+                    // set selection status flag
                     _selected = true;
                 }
+
+                // set to unselected if required
                 else if (
-                        (!MouseOver())
-                        && (_selected)
+                        (!MouseOver()) // somewhere else on screen was clicked
+                        && (_selected) // currently selected
                 ) {
-                    _data += SplashKit.TextInput();
+                    // store the text that has been input
+                    Data += SplashKit.TextInput();
+                    // stop reading the text from SplashKit
                     SplashKit.EndReadingText();
+                    // set selection status flag
                     _selected = false;
                 }
             }
 
-            // handle keypress inputs
+            // only handle keypress inputs if selected
             if (_selected)
             {
-                // backspace
+                // backspace - remove last typed character
                 if (SplashKit.KeyTyped(SplashKitSDK.KeyCode.BackspaceKey))
                 {
+                    // only remove from Data if the SplashKit text being read
+                    // is empty (i.e. there's no text in SplashKit) and Data
+                    // contains characters that can be removed
                     if (
                             (SplashKit.TextInput().Length == 0)
-                            && (_data.Length > 0)
-                    ) {
-                        _data = _data.Substring(0, _data.Length - 1);
+                            && (Data.Length > 0)
+                    )
+                    {
+                        Data = Data.Substring(0, Data.Length - 1);
                     }
                 }
 
-                // enter
+                // enter - submit
                 else if (SplashKit.KeyTyped(SplashKitSDK.KeyCode.ReturnKey))
                 {
-                    _data += SplashKit.TextInput();
-                    _submitted = true;
-                }
-
-                // key pressed
-                else
-                {
-                    // if (_selected) { SplashKit.StartReadingText(_rect); }
-                    // else { SplashKit.EndReadingText(); }
-                    // SplashKit.StartReadingText(_rect);
-                    // string key = SplashKit.TextInput();
-                    // SplashKit.EndReadingText();
-                    // Console.WriteLine($"Key Pressed {key}");
-                    // if (!string.IsNullOrEmpty(key)) { _data += key; }
+                    // store the text that has been input
+                    Data += SplashKit.TextInput();
+                    // update submission
+                    Submitted = true;
                 }
             }
         }
