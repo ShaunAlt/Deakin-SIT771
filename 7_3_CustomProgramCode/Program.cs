@@ -2708,7 +2708,7 @@ namespace _7_3_CustomProgramCode
         /// <summary>
         /// Position of the ui element on the window.
         /// </summary>
-        public SplashKitSDK.Point2D pos { get {
+        public SplashKitSDK.Point2D Pos { get {
             return new SplashKitSDK.Point2D()
             {
                 X = _rect.X + (_rect.Width / 2),
@@ -2972,10 +2972,61 @@ namespace _7_3_CustomProgramCode
         Play,
     }
 
+    /// <summary>
+    /// Used to create a button in the ui that can be interacted with.
+    /// </summary>
+    /// <remarks>
+    /// Fields + Properties
+    /// <list type="bullet">
+    ///     <item>- _dark : <c>SplashKitSDK.Bitmap</c></item>
+    ///     <item>- _light : <c>SplashKitSDK.Bitmap</c></item>
+    ///     <item># _label : <c>string</c></item>
+    ///     <item># _rect : <c>SplashKitSDK.Rectangle</c></item>
+    ///     <item># _window : <c>SplashKitSDK.Window</c></item>
+    ///     <item>+ Pos : <c>SplashKitSDK.Point2D</c> &lt;&lt; readonly &gt;&gt;</item>
+    /// </list>
+    /// 
+    /// Methods
+    /// <list type="bullet">
+    ///     <item>+ Clicked() : <c>bool</c></item>
+    ///     <item>+ Draw() : <c>void</c> &lt;&lt; override &gt;&gt;</item>
+    ///     <item>+ MouseOver() : <c>bool</c></item>
+    ///     <item>+ UIText(label, x, y, width, height, window) : <c>UIText</c></item>
+    ///     <item>+ Update() : <c>bool</c> &lt;&lt; virtual &gt;&gt;</item>
+    /// </list>
+    /// </remarks>
+    /// <see cref="UIBase"/>
     public class UIText : UIBase
     {
-        private SplashKitSDK.Color COL_TEXT = SplashKit.RGBColor(0, 0, 0);
+        /// <summary>
+        /// Draws the ui text element to the window.
+        /// </summary>
+        public override void Draw()
+        {
+            // draw text
+            SplashKit.DrawTextOnWindow(
+                _window,
+                _label,
+                SplashKitSDK.Color.Black,
+                "Arial",
+                20,
+                Pos.X - (_label.Length * 4),
+                Pos.Y - 7
+            );
+        }
 
+        /// <summary>
+        /// Creates a new ui text element.
+        /// </summary>
+        /// <param name="label">Text to display in the text element.</param>
+        /// <param name="x">X-Coordinate of the text element.</param>
+        /// <param name="y">Y-Coordinate of the text element.</param>
+        /// <param name="width">Width of the text element.</param>
+        /// <param name="height">Height of the text element.</param>
+        /// <param name="window">Window to display the text element on.</param>
+        /// <returns>
+        /// New ui text element.
+        /// </returns>
         public UIText(
             string label,
             double x,
@@ -2983,21 +3034,7 @@ namespace _7_3_CustomProgramCode
             double width,
             double height,
             SplashKitSDK.Window window
-        ) : base(label, x, y, width, height, window)
-        { }
-
-        public override void Draw()
-        {
-            SplashKit.DrawTextOnWindow(
-                _window,
-                _label,
-                COL_TEXT,
-                "Arial",
-                20,
-                pos.X - (_label.Length * 4),
-                pos.Y - 7
-            );
-        }
+        ) : base(label, x, y, width, height, window) { }
     }
 
     /* ************************************************************************
@@ -3116,8 +3153,8 @@ namespace _7_3_CustomProgramCode
                     COL_TEXT,
                     "Arial",
                     20,
-                    pos.X - ((_data.Length + SplashKit.TextInput().Length) * 4),
-                    pos.Y - 7
+                    Pos.X - ((_data.Length + SplashKit.TextInput().Length) * 4),
+                    Pos.Y - 7
                 );
             }
             else
@@ -3128,8 +3165,8 @@ namespace _7_3_CustomProgramCode
                     COL_TEXT,
                     "Arial",
                     20,
-                    pos.X - (_data.Length * 4),
-                    pos.Y - 7
+                    Pos.X - (_data.Length * 4),
+                    Pos.Y - 7
                 );
             }
         }
