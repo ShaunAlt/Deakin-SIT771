@@ -1655,7 +1655,6 @@ namespace _7_3_CustomProgramCode
     ///     <item>+ CheckCollision(other) : <c>bool</c></item> (Platform)
     ///     <item>+ Draw() : <c>void</c></item>
     ///     <item>+ Draw(vel_x, vel_y) : <c>void</c> &lt;&lt; override &gt;&gt;</item>
-    ///     <item>- GetName(type_) : <c>string</c> &lt;&lt; static &gt;&gt;</item>
     ///     <item>+ GetRectangle() : <c>SplashKitSDK.Rectangle</c></item>
     ///     <item>+ Player(window) : <c>Player</c></item>
     ///     <item>+ Update(vel_x, vel_y, reverse=false) : <c>void</c></item>
@@ -2056,17 +2055,45 @@ namespace _7_3_CustomProgramCode
         }
     }
     
+    /// <summary>
+    /// Represents a text element sprite within a game level.
+    /// </summary>
+    /// <remarks>
+    /// Fields + Properties
+    /// <list type="bullet">
+    ///     <item>+ Bmp : <c>SplashKitSDK.Bmp | null</c></item>
+    ///     <item>+ Pos : <c>SplashKitSDK.Point2D Pos</c></item>
+    ///     <item>+ Txt : <c>string | null</c></item>
+    /// </list>
+    /// 
+    /// Methods
+    /// <list type="bullet">
+    ///     <item>+ Draw() : <c>void</c></item>
+    ///     <item>+ Draw(vel_x, vel_y) : <c>void</c></item>
+    ///     <item>+ GetRectangle() : <c>SplashKitSDK.Rectangle</c></item>
+    ///     <item>+ SpriteText(window) : <c>SpriteText</c></item>
+    ///     <item>+ Update(vel_x, vel_y, reverse=false) : <c>void</c></item>
+    /// </list>
+    /// </remarks>
+    /// <see cref="Level"/>
+    /// <see cref="Sprite"/>
     public class SpriteText : Sprite
     {
+        /// <summary>
+        /// Creates a new sprite text element which can be used to display text
+        /// in a game level.
+        /// </summary>
+        /// <param name="x">Starting position X-Coordinate.</param>
+        /// <param name="y">Starting position Y-Coordinate.</param>
+        /// <param name="text">Text to display in the text element.</param>
+        /// <param name="window">Game window to display the text on.</param>
+        /// <returns></returns>
         public SpriteText(
             float x,
             float y,
             string text,
             Window window
-        ) : base(x, y, text, window)
-        {
-
-        }
+        ) : base(x, y, text, window) { }
     }
 
     /* ************************************************************************
