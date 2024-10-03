@@ -1908,6 +1908,9 @@ namespace _7_3_CustomProgramCode
     /// Methods
     /// <list type="bullet">
     ///     <item>+ Main() : <c>void</c> &lt;&lt; static &gt;&gt;</item>
+    ///     <item>- ScreenLogin(w) : <c>Account | null</c> &lt;&lt; static &gt;&gt;</item>
+    ///     <item>- ScreenMain(a, w) : <c>Screen</c> &lt;&lt; static &gt;&gt;</item>
+    ///     <item>- ScreenPlayMenu(a, w) : <c>Screen</c> &lt;&lt; static &gt;&gt;</item>
     /// </list>
     /// </remarks>
     public class Program
@@ -2181,125 +2184,335 @@ namespace _7_3_CustomProgramCode
             Account.SaveData(filename);
         }
 
-        public static Account? ScreenLogin(Window w)
+        /// <summary>
+        /// Creates the screen used for logging players into the game.
+        /// </summary>
+        /// <param name="w">Window to draw the ui on.</param>
+        /// <returns>
+        /// Player account that was logged into, or <c>null</c> if quit.
+        /// </returns>
+        private static Account? ScreenLogin(SplashKitSDK.Window w)
         {
             // create screen ui elements
-            UITextBox t1 = new UITextBox("Enter Name", 600, 300, 200, 40, w);
-            UIButton b_login = new UIButton(UIButtonType.Login, 600, 400, w);
-            UIButton b_exit = new UIButton(UIButtonType.Exit, 600, 500, w);
-            List<UIBase> ui = new List<UIBase>(){t1, b_login, b_exit};
+            UIButton buttonExit = new UIButton(
+                UIButtonType.Exit,
+                600,
+                500,
+                w
+            );
+            UIButton buttonLogin = new UIButton(
+                UIButtonType.Login,
+                600,
+                400,
+                w
+            );
+            UITextBox textBox = new UITextBox(
+                "Enter Name",
+                600,
+                300,
+                200,
+                40,
+                w
+            );
+
+            // create list of ui elements
+            List<UIBase> uiList = new List<UIBase>(){
+                buttonExit,
+                buttonLogin,
+                textBox,
+            };
 
             // loop while window is open
             while (!w.CloseRequested)
             {
                 // Process SplashKit Events
                 SplashKit.ProcessEvents();
-                w.Clear(Color.White);
 
-                // update and draw UI elements
-                foreach (UIBase uiElement in ui)
+                // clear the current screen
+                w.Clear(SplashKitSDK.Color.White);
+
+                // update and draw ui elements
+                foreach (UIBase uiElement in uiList)
                 {
                     uiElement.Update();
                     uiElement.Draw();
                 }
 
-                // process button click
-                if (b_login.Clicked() || t1.Submitted) {
-                    if (string.IsNullOrEmpty(t1.Data)) { t1.Reset(); }
-                    else { return Account.GetAccount(t1.Data); }
+                // process data entry
+                if (
+                        (buttonLogin.Clicked()) // login button was clicked
+                        || (textBox.Submitted) // textbox was submitted
+                ) {
+                    // reset textbox data if data is invalid
+                    if (string.IsNullOrEmpty(textBox.Data))
+                    {
+                        textBox.Reset();
+                    }
+
+                    // get / create account if data is valid
+                    else
+                    {
+                        return Account.GetAccount(textBox.Data);
+                    }
                 }
-                if (b_exit.Clicked()) { return null; }
+
+                // exit button clicked - return no player login
+                if (b_exit.Clicked())
+                {
+                    return null;
+                }
 
                 // refresh window
                 w.Refresh();
             }
 
+            // if window was closed - return no player login
             return null;
         }
 
-        public static Screen ScreenMain(Account a, Window w)
+        /// <summary>
+        /// Creates the screen that contains the main menu for the game.
+        /// </summary>
+        /// <param name="a">Current player account.</param>
+        /// <param name="w">Window to draw the ui on.</param>
+        /// <returns>
+        /// Next screen to go to.
+        /// </returns>
+        private static Screen ScreenMain(Account a, SplashKitSDK.Window w)
         {
             // create screen ui elements
-            UIButton b_play = new UIButton(UIButtonType.Play, 450, 420, w);
-            UIButton b_scores = new UIButton(UIButtonType.Highscores, 750, 420, w);
-            UIButton b_settings = new UIButton(UIButtonType.Instructions, 450, 520, w);
-            UIButton b_logout = new UIButton(UIButtonType.Logout, 750, 520, w);
-            UIText t_welcome = new UIText($"Welcome {a.Name} to My Platformer Game", 600, 150, 400, 60, w);
+            UIButton buttonPlay = new UIButton(
+                UIButtonType.Play,
+                450,
+                420,
+                w
+            );
+            UIButton buttonHighscores = new UIButton(
+                UIButtonType.Highscores,
+                750,
+                420,
+                w
+            );
+            UIButton buttonInstructions = new UIButton(
+                UIButtonType.Instructions,
+                450,
+                520,
+                w
+            );
+            UIButton buttonLogout = new UIButton(
+                UIButtonType.Logout,
+                750,
+                520,
+                w
+            );
+            UIText txtWelcome = new UIText(
+                $"Welcome {a.Name} to My Platformer Game",
+                600,
+                150,
+                400,
+                60,
+                w
+            );
 
-            List<UIBase> ui = new List<UIBase>(){b_play, b_scores, b_settings, b_logout, t_welcome};
+            // create list of ui elements
+            List<UIBase> uiList = new List<UIBase>(){
+                buttonPlay,
+                buttonHighscores,
+                buttonInstructions,
+                buttonLogout,
+                txtWelcome,
+            };
 
             // loop while window is open
             while (!w.CloseRequested)
             {
                 // Process SplashKit Events
                 SplashKit.ProcessEvents();
-                w.Clear(Color.White);
+
+                // clear the current screen
+                w.Clear(SplashKitSDK.Color.White);
 
                 // update and draw UI elements
-                foreach (UIBase uiElement in ui)
+                foreach (UIBase uiElement in uiList)
                 {
                     uiElement.Update();
                     uiElement.Draw();
                 }
 
-                // process button click
-                if (b_play.Clicked()) { return Screen.PlayMenu; }
-                if (b_scores.Clicked()) { return Screen.Scores; }
-                if (b_settings.Clicked()) { return Screen.Settings; }
-                if (b_logout.Clicked()) { return Screen.Login; }
+                // process button clicks
+                if (buttonPlay.Clicked()) // play button
+                {
+                    return Screen.PlayMenu;
+                }
+                if (buttonHighscores.Clicked()) // high scores button
+                {
+                    return Screen.Scores;
+                }
+                if (buttonInstructions.Clicked()) // instructions button
+                {
+                    return Screen.Settings;
+                }
+                if (buttonLogout.Clicked()) // logout button
+                {
+                    return Screen.Login;
+                }
 
                 // refresh window
                 w.Refresh();
             }
+
+            // if window was closed - return quit
             return Screen.Quit;
         }
 
-        public static Screen ScreenPlayMenu(Account a, Window w)
+        /// <summary>
+        /// Creates the screen that contains the game level selection menu.
+        /// </summary>
+        /// <param name="a">Current player account.</param>
+        /// <param name="w">Window to draw the ui on.</param>
+        /// <returns>
+        /// Next screen to go to.
+        /// </returns>
+        public static Screen ScreenPlayMenu(Account a, SplashKitSDK.Window w)
         {
-            // create back button
-            UIButton b_back = new UIButton(UIButtonType.Back, 600, 750, w);
-            UIButton b_lvl0 = new UIButton(UIButtonType.Level1, 120, 175, w);
-            UIButton b_lvl1 = new UIButton(UIButtonType.Level2, 360, 175, w);
-            UIButton b_lvl2 = new UIButton(UIButtonType.Level3, 600, 175, w);
-            UIButton b_lvl3 = new UIButton(UIButtonType.Level4, 840, 175, w);
-            UIButton b_lvl4 = new UIButton(UIButtonType.Level5, 1080, 175, w);
-            UIButton b_lvl5 = new UIButton(UIButtonType.Level6, 120, 525, w);
-            UIButton b_lvl6 = new UIButton(UIButtonType.Level7, 360, 525, w);
-            UIButton b_lvl7 = new UIButton(UIButtonType.Level8, 600, 525, w);
-            UIButton b_lvl8 = new UIButton(UIButtonType.Level9, 840, 525, w);
-            UIButton b_lvl9 = new UIButton(UIButtonType.Level10, 1080, 525, w);
-            List<UIBase> ui = new List<UIBase>(){
-                b_back,
-                b_lvl0,
-                b_lvl1,
-                b_lvl2,
-                b_lvl3,
-                b_lvl4,
-                b_lvl5,
-                b_lvl6,
-                b_lvl7,
-                b_lvl8,
-                b_lvl9
+            // create screen ui elements
+            UIButton buttonBack = new UIButton(
+                UIButtonType.Back,
+                600,
+                750,
+                w
+            );
+            UIButton buttonL0 = new UIButton(
+                UIButtonType.Level1,
+                120,
+                175,
+                w
+            );
+            UIButton buttonL1 = new UIButton(
+                UIButtonType.Level2,
+                360,
+                175,
+                w
+            );
+            UIButton buttonL2 = new UIButton(
+                UIButtonType.Level3,
+                600,
+                175,
+                w
+            );
+            UIButton buttonL3 = new UIButton(
+                UIButtonType.Level4,
+                840,
+                175,
+                w
+            );
+            UIButton buttonL4 = new UIButton(
+                UIButtonType.Level5,
+                1080,
+                175,
+                w
+            );
+            UIButton buttonL5 = new UIButton(
+                UIButtonType.Level6,
+                120,
+                525,
+                w
+            );
+            UIButton buttonL6 = new UIButton(
+                UIButtonType.Level7,
+                360,
+                525,
+                w
+            );
+            UIButton buttonL7 = new UIButton(
+                UIButtonType.Level8,
+                600,
+                525,
+                w
+            );
+            UIButton buttonL8 = new UIButton(
+                UIButtonType.Level9,
+                840,
+                525,
+                w
+            );
+            UIButton buttonL9 = new UIButton(
+                UIButtonType.Level10,
+                1080,
+                525,
+                w
+            );
+
+            // create initial list of ui elements
+            List<UIBase> uiList = new List<UIBase>(){
+                buttonBack,
+                buttonL0,
+                buttonL1,
+                buttonL2,
+                buttonL3,
+                buttonL4,
+                buttonL5,
+                buttonL6,
+                buttonL7,
+                buttonL8,
+                buttonL9,
             };
 
-            // create screen ui text elements
+            // create list of level numbers
             List<LevelNumber> lvls = new List<LevelNumber>()
             {
-                LevelNumber.L0, LevelNumber.L1, LevelNumber.L2, LevelNumber.L3, LevelNumber.L4,
-                LevelNumber.L5, LevelNumber.L6, LevelNumber.L7, LevelNumber.L8, LevelNumber.L9
+                LevelNumber.L0,
+                LevelNumber.L1,
+                LevelNumber.L2,
+                LevelNumber.L3,
+                LevelNumber.L4,
+                LevelNumber.L5,
+                LevelNumber.L6,
+                LevelNumber.L7,
+                LevelNumber.L8,
+                LevelNumber.L9,
             };
-            int[] x_vals = new int[] { 120, 360, 600, 840, 1080 };
-            int[] y_vals = new int[] { 175, 525 };
+
+            // define the central x and y coordinates of each level on screen
+            int[] x_vals = new int[] { 120, 360, 600, 840, 1080, };
+            int[] y_vals = new int[] { 175, 525, };
+
+            // create text elements for each level and its score
             for (int i = 0; i < y_vals.Length; i++)
             {
                 for (int j = 0; j < x_vals.Length; j++)
                 {
-                    int n = (5*i)+j;
-                    Score? hs = a.GetScore(lvls[n]);
-                    List<Score> hs_list = Account.GetScores(lvls[n]);
-                    ui.Add(new UIText($"Level {n+1}", x_vals[j], y_vals[i] - 125, 240, 40, w));
-                    ui.Add(new UIText("Your Best:", x_vals[j], y_vals[i] - 85, 240, 30, w));
-                    ui.Add(new UIText(hs != null ? $"{hs.Value}" : "Not Set", x_vals[j], y_vals[i] - 65, 240, 30, w));
+                    // get level number from list
+                    LevelNumber lvl = lvls[(5 * i) + j];
+
+                    // get current player's high score
+                    Score? hs = a.GetScore(lvl);
+
+                    // create text elements
+                    uiList.Add(new UIText( // level number indicator
+                        $"Level {((int)lvl)+1}",
+                        x_vals[j],
+                        y_vals[i] - 125,
+                        240,
+                        40,
+                        w
+                    ));
+                    uiList.Add(new UIText( // "your best" text
+                        "Your Best:",
+                        x_vals[j],
+                        y_vals[i] - 85,
+                        240,
+                        30,
+                        w
+                    ));
+                    uiList.Add(new UIText( // current player's high score
+                        hs != null ? $"{hs.Value}" : "Not Set",
+                        x_vals[j],
+                        y_vals[i] - 65,
+                        240,
+                        30,
+                        w
+                    ));
                 }
             }
 
@@ -2308,62 +2521,182 @@ namespace _7_3_CustomProgramCode
             {
                 // Process SplashKit Events
                 SplashKit.ProcessEvents();
+
+                // clear the current screen
                 w.Clear(Color.White);
 
                 // update and draw UI elements
-                foreach (UIBase uiElement in ui)
+                foreach (UIBase uiElement in uiList)
                 {
                     uiElement.Update();
                     uiElement.Draw();
                 }
 
-                // process button click
-                if (b_back.Clicked()) { return Screen.Main; }
-                if (b_lvl0.Clicked()) { return Screen.Lvl0; }
-                if (b_lvl1.Clicked()) { return Screen.Lvl1; }
-                if (b_lvl2.Clicked()) { return Screen.Lvl2; }
-                if (b_lvl3.Clicked()) { return Screen.Lvl3; }
-                if (b_lvl4.Clicked()) { return Screen.Lvl4; }
-                if (b_lvl5.Clicked()) { return Screen.Lvl5; }
-                if (b_lvl6.Clicked()) { return Screen.Lvl6; }
-                if (b_lvl7.Clicked()) { return Screen.Lvl7; }
-                if (b_lvl8.Clicked()) { return Screen.Lvl8; }
-                if (b_lvl9.Clicked()) { return Screen.Lvl9; }
+                // process button clicks
+                if (buttonBack.Clicked()) // back button clicked
+                {
+                    return Screen.Main;
+                }
+                if (buttonL0.Clicked()) // level 0 button clicked
+                {
+                    return Screen.Lvl0;
+                }
+                if (buttonL1.Clicked()) // level 1 button clicked
+                {
+                    return Screen.Lvl1;
+                }
+                if (buttonL2.Clicked()) // level 2 button clicked
+                {
+                    return Screen.Lvl2;
+                }
+                if (buttonL3.Clicked()) // level 3 button clicked
+                {
+                    return Screen.Lvl3;
+                }
+                if (buttonL4.Clicked()) // level 4 button clicked
+                {
+                    return Screen.Lvl4;
+                }
+                if (buttonL5.Clicked()) // level 5 button clicked
+                {
+                    return Screen.Lvl5;
+                }
+                if (buttonL6.Clicked()) // level 6 button clicked
+                {
+                    return Screen.Lvl6;
+                }
+                if (buttonL7.Clicked()) // level 7 button clicked
+                {
+                    return Screen.Lvl7;
+                }
+                if (buttonL8.Clicked()) // level 8 button clicked
+                {
+                    return Screen.Lvl8;
+                }
+                if (buttonL9.Clicked()) // level 9 button clicked
+                {
+                    return Screen.Lvl9;
+                }
 
                 // refresh window
                 w.Refresh();
             }
+
+            // if window was closed - return quit
             return Screen.Quit;
         }
 
+        /// <summary>
+        /// Creates the screen that contains the game high scores.
+        /// </summary>
+        /// <param name="a">Current player account.</param>
+        /// <param name="w">Window to draw the ui on.</param>
+        /// <returns>
+        /// Next screen to go to.
+        /// </returns>
         public static Screen ScreenScores(Account a, Window w)
         {
-            // create back button
-            UIButton b_back = new UIButton(UIButtonType.Back, 600, 750, w);
-            List<UIBase> ui = new List<UIBase>(){b_back};
+            // create screen ui elements
+            UIButton buttonBack = new UIButton(
+                UIButtonType.Back,
+                600,
+                750,
+                w
+            );
 
-            // create screen ui text elements
+            // create initial list of ui elements
+            List<UIBase> uiList = new List<UIBase>(){ buttonBack, };
+
+            // create list of level numbers
             List<LevelNumber> lvls = new List<LevelNumber>()
             {
-                LevelNumber.L0, LevelNumber.L1, LevelNumber.L2, LevelNumber.L3, LevelNumber.L4,
-                LevelNumber.L5, LevelNumber.L6, LevelNumber.L7, LevelNumber.L8, LevelNumber.L9
+                LevelNumber.L0,
+                LevelNumber.L1,
+                LevelNumber.L2,
+                LevelNumber.L3,
+                LevelNumber.L4,
+                LevelNumber.L5,
+                LevelNumber.L6,
+                LevelNumber.L7,
+                LevelNumber.L8,
+                LevelNumber.L9,
             };
-            int[] x_vals = new int[] { 120, 360, 600, 840, 1080 };
-            int[] y_vals = new int[] { 175, 525 };
+
+            // define the central x and y coordinates of each level on screen
+            int[] x_vals = new int[] { 120, 360, 600, 840, 1080, };
+            int[] y_vals = new int[] { 175, 525, };
+
+            // create text elements for each level and its scores
             for (int i = 0; i < y_vals.Length; i++)
             {
                 for (int j = 0; j < x_vals.Length; j++)
                 {
-                    int n = (5*i)+j;
-                    Score? hs = a.GetScore(lvls[n]);
-                    List<Score> hs_list = Account.GetScores(lvls[n]);
-                    ui.Add(new UIText($"Level {n+1}", x_vals[j], y_vals[i] - 125, 240, 40, w));
-                    ui.Add(new UIText("Your Best:", x_vals[j], y_vals[i] - 85, 240, 30, w));
-                    ui.Add(new UIText(hs != null ? $"{hs.Value}" : "Not Set", x_vals[j], y_vals[i] - 65, 240, 30, w));
-                    ui.Add(new UIText("High Scores:", x_vals[j], y_vals[i] - 20, 240, 30, w));
-                    ui.Add(new UIText(hs_list.Count >= 1 ? $"1st: {hs_list[0].Value}" : "1st: Not Set", x_vals[j], y_vals[i] + 10, 240, 30, w));
-                    ui.Add(new UIText(hs_list.Count >= 2 ? $"2nd: {hs_list[1].Value}" : "2nd: Not Set", x_vals[j], y_vals[i] + 40, 240, 30, w));
-                    ui.Add(new UIText(hs_list.Count >= 3 ? $"3rd: {hs_list[2].Value}" : "3rd: Not Set", x_vals[j], y_vals[i] + 70, 240, 30, w));
+                    // get level number from list
+                    LevelNumber lvl = lvls[(5 * i) + j];
+
+                    // get current player's high score
+                    Score? hs = a.GetScore(lvl);
+
+                    // create global high scores
+                    List<Score> hs_list = Account.GetScores(lvl);
+
+                    // create text elements
+                    uiList.Add(new UIText( // level number indicator
+                        $"Level {((int)lvl)+1}",
+                        x_vals[j],
+                        y_vals[i] - 125,
+                        240,
+                        40,
+                        w
+                    ));
+                    uiList.Add(new UIText( // "your best" text
+                        "Your Best:",
+                        x_vals[j],
+                        y_vals[i] - 85,
+                        240,
+                        30,
+                        w
+                    ));
+                    uiList.Add(new UIText( // current player's high score
+                        hs != null ? $"{hs.Value}" : "Not Set",
+                        x_vals[j],
+                        y_vals[i] - 65,
+                        240,
+                        30,
+                        w
+                    ));
+                    uiList.Add(new UIText( // "high scores" text
+                        "High Scores:",
+                        x_vals[j],
+                        y_vals[i] - 20,
+                        240,
+                        30,
+                        w
+                    ));
+                    uiList.Add(new UIText( // global 1st high score
+                        hs_list.Count >= 1 ? $"1st: {hs_list[0].Value}" : "1st: Not Set",
+                        x_vals[j],
+                        y_vals[i] + 10,
+                        240,
+                        30,
+                        w
+                    ));
+                    uiList.Add(new UIText( // global 2nd high score
+                        hs_list.Count >= 2 ? $"2nd: {hs_list[1].Value}" : "2nd: Not Set",
+                        x_vals[j],
+                        y_vals[i] + 40,
+                        240,
+                        30,
+                        w
+                    ));
+                    uiList.Add(new UIText( // global 3rd high score
+                        hs_list.Count >= 3 ? $"3rd: {hs_list[2].Value}" : "3rd: Not Set",
+                        x_vals[j],
+                        y_vals[i] + 70,
+                        240,
+                        30,
+                        w
+                    ));
                 }
             }
 
@@ -2372,55 +2705,104 @@ namespace _7_3_CustomProgramCode
             {
                 // Process SplashKit Events
                 SplashKit.ProcessEvents();
+
+                // clear the current screen
                 w.Clear(Color.White);
 
                 // update and draw UI elements
-                foreach (UIBase uiElement in ui)
+                foreach (UIBase uiElement in uiList)
                 {
                     uiElement.Update();
                     uiElement.Draw();
                 }
 
                 // process button click
-                if (b_back.Clicked()) { return Screen.Main; }
+                if (buttonBack.Clicked())
+                {
+                    return Screen.Main;
+                }
 
                 // refresh window
                 w.Refresh();
             }
+
+            // if window was closed - return quit
             return Screen.Quit;
         }
 
+        /// <summary>
+        /// Creates the screen that contains the game play instructions.
+        /// </summary>
+        /// <param name="w">Window to draw the ui on.</param>
+        /// <returns>
+        /// Next screen to go to.
+        /// </returns>
         public static Screen ScreenSettings(Window w)
         {
-            // create back button
-            UIButton b_back = new UIButton(UIButtonType.Back, 600, 750, w);
-            List<UIBase> ui = new List<UIBase>(){b_back};
+            // create initial screen ui elements
+            UIButton buttonBack = new UIButton(
+                UIButtonType.Back,
+                600,
+                750,
+                w
+            );
+
+            // create initial list of ui elements
+            List<UIBase> uiList = new List<UIBase>(){buttonBack};
 
             // create screen ui text elements
-            ui.Add(new UIText("Press the UP Arrow Key to Jump", 600, 150, 200, 60, w));
-            ui.Add(new UIText("Press the LEFT or RIGHT Arrow Keys to Move Left or Right", 600, 350, 200, 60, w));
-            ui.Add(new UIText("Your score is based on how quickly you each the Target", 600, 550, 200, 60, w));
+            uiList.Add(new UIText( // jumping instructions
+                "Press the UP Arrow Key to Jump",
+                600,
+                150,
+                200,
+                60,
+                w
+            ));
+            uiList.Add(new UIText( // left/right movement instructions
+                "Press the LEFT or RIGHT Arrow Keys to Move Left or Right",
+                600,
+                250,
+                200,
+                60,
+                w
+            ));
+            uiList.Add(new UIText( // scoring instructions
+                "Your score is based on how quickly you each the Target",
+                600,
+                350,
+                200,
+                60,
+                w
+            ));
 
             // loop while window is open
             while (!w.CloseRequested)
             {
                 // Process SplashKit Events
-                SplashKit.ProcessEvents();
+                SplashKit.ProcessEvents();\
+
+                // clear the current screen
                 w.Clear(Color.White);
 
                 // update and draw UI elements
-                foreach (UIBase uiElement in ui)
+                foreach (UIBase uiElement in uiList)
                 {
                     uiElement.Update();
                     uiElement.Draw();
                 }
 
                 // process button click
-                if (b_back.Clicked()) { return Screen.Main; }
+                if (buttonBack.Clicked())
+                {
+                    return Screen.Main;
+                }
 
                 // refresh window
                 w.Refresh();
             }
+
+            // if window was closed - return quit
             return Screen.Quit;
         }
     }
@@ -2446,41 +2828,6 @@ namespace _7_3_CustomProgramCode
     /// <see cref="LevelNumber"/>
     public class Score
     {
-        /*
-        Individual Player Level Score
-        -
-        Represents an individual score that a player got for a particular
-        level.
-
-        Attributes / Fields
-        -
-        - _datetime : `DateTime`
-            - Date/Time that the score was generated.
-        - _level : `LevelNumber`
-            - Number of the level that the score was generated in.
-        - _score : `int`
-            - Score value that the player achieved.
-
-        Constants
-        -
-        None
-
-        Methods
-        -
-        - Score(score, level) : `Score`
-            - Public Constructor Method.
-            - Creates a new score object with the given score and level number.
-
-        Properties
-        -
-        - datetime : `DateTime`
-            - Date/Time that the score was generated.
-        - level : `LevelNumber`
-            - Number of the level that the score was generated in.
-        - score : `int`
-            - Score value that the player achieved.
-        */
-
         /// <summary>
         /// Date/Time that the score was generated.
         /// </summary>
