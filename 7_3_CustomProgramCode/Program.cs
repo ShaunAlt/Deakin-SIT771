@@ -279,7 +279,13 @@ namespace _7_3_CustomProgramCode
             foreach (XElement account in accounts)
             {
                 // get the name of the account
-                string name = account.Element("Name")?.Value;
+                string? name = account.Element("Name")?.Value;
+
+                // if name is null, skip account
+                if (name == null)
+                {
+                    continue;
+                }
 
                 // create a new account with the specified name
                 Account newAccount = Account.GetAccount(name);
@@ -297,9 +303,19 @@ namespace _7_3_CustomProgramCode
                 foreach (var score in scores)
                 {
                     // get the level, score, and date/time from the xml file
-                    string level = score.Attribute("Level")?.Value;
-                    string scoreVal = score.Attribute("Score")?.Value;
-                    string dateTime = score.Attribute("DateTime")?.Value;
+                    string? level = score.Attribute("Level")?.Value;
+                    string? scoreVal = score.Attribute("Score")?.Value;
+                    string? dateTime = score.Attribute("DateTime")?.Value;
+
+                    // if any data is null (invalid), skip this score
+                    if (
+                            (level == null)
+                            || (scoreVal == null)
+                            || (dateTime == null)
+                    )
+                    {
+                        continue;
+                    }
 
                     // create a new score with the specified level, score, and
                     // date/time data
@@ -442,6 +458,23 @@ namespace _7_3_CustomProgramCode
             string message
         ) : base(message) { }
         public InvalidPlatformTypeException(
+            string message,
+            System.Exception inner
+        ) : base(message, inner) { }
+    }
+
+    /// <summary>
+    /// Raised when the goal sprite does not have a valid bitmap.
+    /// </summary>
+    /// <see cref="Goal"/>
+    /// <see cref="Player"/>
+    public class InvalidGoalBitmapException : System.Exception
+    {
+        public InvalidGoalBitmapException() { }
+        public InvalidGoalBitmapException(
+            string message
+        ) : base(message) { }
+        public InvalidGoalBitmapException(
             string message,
             System.Exception inner
         ) : base(message, inner) { }
@@ -1786,6 +1819,14 @@ namespace _7_3_CustomProgramCode
             // initialize as not collided
             bool collision = false;
 
+            // validate goal sprite has a bitmap
+            if (other.Bmp == null)
+            {
+                throw new InvalidGoalBitmapException(
+                    "The goal sprite has no bitmap"
+                );
+            }
+
             // check each animation frame of the player
             foreach (SplashKitSDK.Bitmap bmp in _bmps)
             {
@@ -2257,7 +2298,7 @@ namespace _7_3_CustomProgramCode
                 }
 
                 // exit button clicked - return no player login
-                if (b_exit.Clicked())
+                if (buttonExit.Clicked())
                 {
                     return null;
                 }
@@ -2780,7 +2821,7 @@ namespace _7_3_CustomProgramCode
             while (!w.CloseRequested)
             {
                 // Process SplashKit Events
-                SplashKit.ProcessEvents();\
+                SplashKit.ProcessEvents();
 
                 // clear the current screen
                 w.Clear(Color.White);
