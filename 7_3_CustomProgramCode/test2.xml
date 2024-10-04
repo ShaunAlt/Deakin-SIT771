@@ -15,4 +15,16 @@
     <Name>zshaun</Name>
     <Scores />
   </Account>
+  <Account>
+    <Name>new player 1</Name>
+    <Scores>
+      <Score Level="1" Score="8641" DateTime="2024-10-04T09:52:58.602063+10:00" />
+    </Scores>
+  </Account>
+  <Account>
+    <Name>p2</Name>
+    <Scores>
+      <Score Level="1" Score="8100" DateTime="2024-10-04T09:53:36.568683+10:00" />
+    </Scores>
+  </Account>
 </Accounts>
